@@ -37,8 +37,8 @@ public class Connection
     /// Resource.
     /// </summary>
     /// <example>Components.Tables</example>
-    [DefaultValue(Resource.Tables)]
-    public Resource Resource { get; set; }
+    [DefaultValue(Resources.Tables)]
+    public Resources Resource { get; set; }
 
     /// <summary>
     /// Method to read Service account JSON.

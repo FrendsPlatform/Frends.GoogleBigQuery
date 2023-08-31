@@ -16,6 +16,7 @@ public class UnitTest
     {
         string json;
 
+        // This one is to handle CI secret problems.
         if (File.Exists(_secretJson))
             json = File.ReadAllText(_secretJson);
         else
@@ -28,7 +29,7 @@ public class UnitTest
         _connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
-            Resource = Resource.Datasets,
+            Resource = Resources.Datasets,
             SecretJson = json,
             ProjectId = "instant-stone-387712",
             DatasetId = "tasktest",
@@ -55,7 +56,7 @@ public class UnitTest
     [TestMethod]
     public async Task List_Success_AllResources()
     {
-        var allResourceTypes = Enum.GetValues(typeof(Resource)).Cast<Resource>().ToList();
+        var allResourceTypes = Enum.GetValues(typeof(Resources)).Cast<Resources>().ToList();
 
         foreach (var item in allResourceTypes)
         {

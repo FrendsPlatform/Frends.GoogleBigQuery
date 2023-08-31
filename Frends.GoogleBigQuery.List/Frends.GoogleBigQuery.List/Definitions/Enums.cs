@@ -1,9 +1,10 @@
 ﻿namespace Frends.GoogleBigQuery.List.Definitions;
+#pragma warning disable CS1591 // Self explanatory
 
 /// <summary>
-/// Resource.
+/// Resources.
 /// </summary>
-public enum Resource
+public enum Resources
 {
     Datasets,
     Jobs,
@@ -13,23 +14,6 @@ public enum Resource
     RowAccessPolicies,
     TableData,
     Tables
-}
-
-public enum AuthenticationMethods
-{
-    ServiceAccount,
-    UserAccount
-}
-
-/// <summary>
-/// OAuthScopes.
-/// </summary>
-public enum OAuthScopes
-{
-    BigQuery,
-    CloudPlatform,
-    BigQueryReadonly,
-    CloudPlatformReadOnly
 }
 
 /// <summary>

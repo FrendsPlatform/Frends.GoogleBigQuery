@@ -1,5 +1,6 @@
 using Frends.GoogleBigQuery.List.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text;
 
 namespace Frends.GoogleBigQuery.List.Tests;
 
@@ -13,7 +14,16 @@ public class UnitTest
     [TestInitialize]
     public void Init()
     {
-        var json = File.Exists(_secretJson) ? File.ReadAllText(_secretJson) : _secretJson; //Plaintext in CI
+        string json;
+
+        if (File.Exists(_secretJson))
+            json = File.ReadAllText(_secretJson);
+        else
+        {
+            var _json = !string.IsNullOrEmpty(_secretJson) ? _secretJson : "";
+            byte[] bytes = Convert.FromBase64String(_json);
+            json = Encoding.UTF8.GetString(bytes);
+        }
 
         _connection = new()
         {

@@ -17,7 +17,7 @@ namespace Frends.GoogleBigQuery.List;
 public class GoogleBigQuery
 {
     /// <summary>
-    /// List resource data.
+    /// List resource.
     /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.GoogleBigQuery.List)
     /// </summary>
     /// <param name="connection">Connection parameters.</param>

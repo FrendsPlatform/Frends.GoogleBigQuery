@@ -37,7 +37,7 @@ public class GoogleBigQuery
             var bigqueryService = new BigqueryService(serviceInitializer);
 
             if (bigqueryService is not null)
-                return new Result(true, await GetList(new BigqueryService(serviceInitializer), connection, cancellationToken), null);
+                return new Result(true, await ListRequest(new BigqueryService(serviceInitializer), connection, cancellationToken), null);
             else
             {
                 if (options.ThrowOnError)
@@ -70,7 +70,7 @@ public class GoogleBigQuery
         return credential;
     }
 
-    private static async Task<JToken> GetList(BigqueryService service, Connection connection, CancellationToken cancellationToken)
+    private static async Task<JToken> ListRequest(BigqueryService service, Connection connection, CancellationToken cancellationToken)
     {
         return connection.Resource switch
         {

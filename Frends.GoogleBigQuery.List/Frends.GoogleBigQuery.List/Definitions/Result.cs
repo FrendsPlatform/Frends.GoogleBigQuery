@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Data;
 
 namespace Frends.GoogleBigQuery.List.Definitions;
 
@@ -16,9 +14,9 @@ public class Result
     public bool Success { get; private set; }
 
     /// <summary>
-    /// Request content as List of DataSets.
+    /// Data.
     /// </summary>
-    /// <example>{{ "id": "151959", "key": "TT-87", "self": "https://test.jira.fi/jira/rest/api/latest/issue/151959" }}</example>
+    /// <example>{{  "datasets": [ { "datasetReference": { "datasetId": "tasktest", "projectId": "instant-stone-387712",...</example>
     public JToken Data { get; private set; }
 
     /// <summary>

@@ -16,6 +16,13 @@ public class Connection
     public string BaseUri { get; set; }
 
     /// <summary>
+    /// Resource.
+    /// </summary>
+    /// <example>Components.Tables</example>
+    [DefaultValue(Resources.Tables)]
+    public Resources Resource { get; set; }
+
+    /// <summary>
     /// Project ID.
     /// </summary>
     /// <example>global-env-397309</example>
@@ -32,13 +39,6 @@ public class Connection
     /// </summary>
     /// <example>bigquery-public-data.baseball.games_post_wide</example>
     public string TableId { get; set; }
-
-    /// <summary>
-    /// Resource.
-    /// </summary>
-    /// <example>Components.Tables</example>
-    [DefaultValue(Resources.Tables)]
-    public Resources Resource { get; set; }
 
     /// <summary>
     /// Method to read Service account JSON.

@@ -74,14 +74,14 @@ public class GoogleBigQuery
     {
         return connection.Resource switch
         {
-            Resource.Datasets => JToken.FromObject(await service.Datasets.List(connection.ProjectId).ExecuteAsync(cancellationToken)),
-            Resource.Jobs => JToken.FromObject(await service.Jobs.List(connection.ProjectId).ExecuteAsync(cancellationToken)),
-            Resource.Models => JToken.FromObject(await service.Models.List(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken)),
-            Resource.Projects => JToken.FromObject(await service.Projects.List().ExecuteAsync(cancellationToken)),
-            Resource.Routines => JToken.FromObject(await service.Routines.List(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken)),
-            Resource.RowAccessPolicies => JToken.FromObject(await service.RowAccessPolicies.List(connection.ProjectId, connection.DatasetId, connection.TableId).ExecuteAsync(cancellationToken)),
-            Resource.TableData => JToken.FromObject(await service.Tabledata.List(connection.ProjectId, connection.DatasetId, connection.TableId).ExecuteAsync(cancellationToken)),
-            Resource.Tables => JToken.FromObject(await service.Tables.List(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken)),
+            Resources.Datasets => JToken.FromObject(await service.Datasets.List(connection.ProjectId).ExecuteAsync(cancellationToken)),
+            Resources.Jobs => JToken.FromObject(await service.Jobs.List(connection.ProjectId).ExecuteAsync(cancellationToken)),
+            Resources.Models => JToken.FromObject(await service.Models.List(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken)),
+            Resources.Projects => JToken.FromObject(await service.Projects.List().ExecuteAsync(cancellationToken)),
+            Resources.Routines => JToken.FromObject(await service.Routines.List(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken)),
+            Resources.RowAccessPolicies => JToken.FromObject(await service.RowAccessPolicies.List(connection.ProjectId, connection.DatasetId, connection.TableId).ExecuteAsync(cancellationToken)),
+            Resources.TableData => JToken.FromObject(await service.Tabledata.List(connection.ProjectId, connection.DatasetId, connection.TableId).ExecuteAsync(cancellationToken)),
+            Resources.Tables => JToken.FromObject(await service.Tables.List(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken)),
             _ => throw new Exception("Resource not supported."),
         };
     }

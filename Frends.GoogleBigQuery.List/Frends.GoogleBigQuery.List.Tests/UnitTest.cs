@@ -58,14 +58,29 @@ public class UnitTest
     }
 
     [TestMethod]
-    public async Task List_Invalid_SecretJson()
+    public async Task List_Invalid_SecretJson_Throw()
     {
         _connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
         var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.List(_connection, _options, default));
         Assert.IsNotNull(ex);
-        Assert.IsTrue(ex.Message.Contains("Error creating credential from JSON or JSON parameters. Unrecognized credential type"));
+        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
+    }
+
+    [TestMethod]
+    public async Task List_Invalid_SecretJson_ReturnError()
+    {
+        _connection.SecretJson = @"{ 
+""Foo"": ""Bar""
+}";
+
+        _options.ThrowOnError = false;
+
+        var result = await GoogleBigQuery.List(_connection, _options, default);
+        Assert.IsFalse(result.Success);
+        Assert.IsNull(result.Data);
+        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
     }
 
     [TestMethod]

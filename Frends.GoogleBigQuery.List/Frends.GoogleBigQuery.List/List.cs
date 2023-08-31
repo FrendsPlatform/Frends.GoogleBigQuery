@@ -49,9 +49,9 @@ public class GoogleBigQuery
         catch (Exception ex)
         {
             if (options.ThrowOnError)
-                throw new Exception("Error occured: ", ex);
+                throw new Exception($"Error occured: {ex.Message}");
 
-            return new Result(false, null, $"Error occured: {ex}");
+            return new Result(false, null, $"Error occured: {ex.Message}");
         }
     }
 

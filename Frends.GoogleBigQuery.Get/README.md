@@ -1,9 +1,9 @@
-# Frends.GoogleBigQuery.Get
+# Frends.GoogleBigQuery.GetResource
 Frends Task to Google BigQuery GET resource.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) 
-[![Build](https://github.com/FrendsPlatform/Frends.GoogleBigQuery/actions/workflows/Get_build_and_test_on_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.GoogleBigQuery/actions)
-![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.GoogleBigQuery/Frends.GoogleBigQuery.Get|main)
+[![Build](https://github.com/FrendsPlatform/Frends.GoogleBigQuery/actions/workflows/GetResource_build_and_test_on_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.GoogleBigQuery/actions)
+![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.GoogleBigQuery/Frends.GoogleBigQuery.GetResource|main)
 
 # Installing
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace Frends.GoogleBigQuery.Get.Definitions;
+namespace Frends.GoogleBigQuery.GetResource.Definitions;
 
 /// <summary>
 /// Task's result.

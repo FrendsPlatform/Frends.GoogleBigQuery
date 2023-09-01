@@ -1,4 +1,6 @@
-﻿namespace Frends.GoogleBigQuery.Get.Definitions;
+﻿using System.ComponentModel;
+
+namespace Frends.GoogleBigQuery.GetResource.Definitions;
 
 /// <summary>
 /// Options parameters.
@@ -10,5 +12,6 @@ public class Options
     /// If set to false, exception message can be found in Result.ErrorMessage.
     /// </summary>
     /// <example>true</example>
+    [DefaultValue(true)]
     public bool ThrowOnError { get; set; }
 }

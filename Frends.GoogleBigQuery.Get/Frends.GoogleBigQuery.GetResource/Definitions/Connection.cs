@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Frends.GoogleBigQuery.Get.Definitions;
+namespace Frends.GoogleBigQuery.GetResource.Definitions;
 
 /// <summary>
 /// Connection parameters.
@@ -18,7 +18,7 @@ public class Connection
     /// <summary>
     /// Resource.
     /// </summary>
-    /// <example>Components.Tables</example>
+    /// <example>Resources.Tables</example>
     [DefaultValue(Resources.Tables)]
     public Resources Resource { get; set; }
 

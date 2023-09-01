@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Frends.GoogleBigQuery.Get\Frends.GoogleBigQuery.Get.csproj" />
+    <ProjectReference Include="..\Frends.GoogleBigQuery.GetResource\Frends.GoogleBigQuery.GetResource.csproj" />
   </ItemGroup>
 
 </Project>

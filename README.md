@@ -3,7 +3,7 @@ Frends Task for Google BigQuery operations.
 
 # Tasks
 
-- [Frends.GoogleBigQuery.Get](Frends.GoogleBigQuery.Get/README.md)
+- [Frends.GoogleBigQuery.GetResource](Frends.GoogleBigQuery.GetResource/README.md)
 
 # Contributing
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.

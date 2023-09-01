@@ -2,10 +2,10 @@
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Bigquery.v2;
 using Google.Apis.Services;
-using Newtonsoft.Json.Linq;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -67,21 +67,25 @@ public class GoogleBigQuery
         return credential;
     }
 
-    private static async Task<JToken> GetRequest(BigqueryService service, Connection connection, CancellationToken cancellationToken)
+    private static async Task<JsonElement> GetRequest(BigqueryService service, Connection connection, CancellationToken cancellationToken)
     {
         switch (connection.Resource)
         {
             case Resources.Datasets:
-                return JToken.FromObject(await service.Datasets.Get(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken));
+                var datasetResponse = await service.Datasets.Get(connection.ProjectId, connection.DatasetId).ExecuteAsync(cancellationToken);
+                return JsonDocument.Parse(JsonSerializer.Serialize(datasetResponse)).RootElement;
             case Resources.Jobs:
-                return JToken.FromObject(await service.Jobs.Get(connection.ProjectId, connection.JobId).ExecuteAsync(cancellationToken));
+                var jobResponse = await service.Jobs.Get(connection.ProjectId, connection.JobId).ExecuteAsync(cancellationToken);
+                return JsonDocument.Parse(JsonSerializer.Serialize(jobResponse)).RootElement;
             case Resources.Models:
-                return JToken.FromObject(await service.Models.Get(connection.ProjectId, connection.DatasetId, connection.ModelId).ExecuteAsync(cancellationToken));
+                var modelResponse = await service.Models.Get(connection.ProjectId, connection.DatasetId, connection.ModelId).ExecuteAsync(cancellationToken);
+                return JsonDocument.Parse(JsonSerializer.Serialize(modelResponse)).RootElement;
             case Resources.Routines:
                 var requestRoutine = service.Routines.Get(connection.ProjectId, connection.DatasetId, connection.RoutineId);
                 if (!string.IsNullOrWhiteSpace(connection.ReadMask))
                     requestRoutine.ReadMask = connection.ReadMask;
-                return JToken.FromObject(await requestRoutine.ExecuteAsync(cancellationToken));
+                var routineResponse = await requestRoutine.ExecuteAsync(cancellationToken);
+                return JsonDocument.Parse(JsonSerializer.Serialize(routineResponse)).RootElement;
             case Resources.Tables:
                 var requestTables = service.Tables.Get(connection.ProjectId, connection.DatasetId, connection.TableId);
                 if (!string.IsNullOrWhiteSpace(connection.SelectedFields))
@@ -95,7 +99,9 @@ public class GoogleBigQuery
                     Views.Tablemetadataviewunspecified => (TablesResource.GetRequest.ViewEnum?)TablesResource.GetRequest.ViewEnum.TABLEMETADATAVIEWUNSPECIFIED,
                     _ => (TablesResource.GetRequest.ViewEnum?)TablesResource.GetRequest.ViewEnum.STORAGESTATS,
                 };
-                return JToken.FromObject(await requestTables.ExecuteAsync(cancellationToken));
+
+                var tableResponse = await requestTables.ExecuteAsync(cancellationToken);
+                return JsonDocument.Parse(JsonSerializer.Serialize(tableResponse)).RootElement;
             default:
                 throw new Exception("Resource not supported.");
         }

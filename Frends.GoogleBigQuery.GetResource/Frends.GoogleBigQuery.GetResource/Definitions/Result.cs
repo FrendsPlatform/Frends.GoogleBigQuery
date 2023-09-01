@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Text.Json;
 
 namespace Frends.GoogleBigQuery.GetResource.Definitions;
 
@@ -19,7 +17,7 @@ public class Result
     /// Request content as Get of DataSets.
     /// </summary>
     /// <example>{{	"access": [ { "dataset": null, "domain": null, "groupByEmail": null ...	}}</example>
-    public JToken Data { get; private set; }
+    public JsonElement? Data { get; private set; }
 
     /// <summary>
     /// Error message.
@@ -27,7 +25,7 @@ public class Result
     /// <example>Error occured...</example>
     public string ErrorMessage { get; private set; }
 
-    internal Result(bool success, JToken data, string errorMessage)
+    internal Result(bool success, JsonElement? data, string errorMessage)
     {
         Success = success;
         Data = data;

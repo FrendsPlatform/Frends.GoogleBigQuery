@@ -32,7 +32,7 @@ public class GoogleBigQuery
             {
                 HttpClientInitializer = await GetServiceAccountCredential(connection, cancellationToken),
                 ApplicationName = "BigQueryApp",
-                BaseUri = connection.BaseUri,
+                BaseUri = string.IsNullOrWhiteSpace(connection.BaseUri) ? null : connection.BaseUri,
             };
             var bigqueryService = new BigqueryService(serviceInitializer);
 

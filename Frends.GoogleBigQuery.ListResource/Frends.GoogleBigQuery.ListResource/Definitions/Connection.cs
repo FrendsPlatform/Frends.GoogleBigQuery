@@ -57,8 +57,8 @@ public class Connection
     ///   ...
     /// }
     /// </example>
-    [UIHint(nameof(ReadJsonMethods), "", ReadJsonMethods.JSON)]
-    [DisplayFormat(DataFormatString = "Json")]
+    [UIHint(nameof(ReadJsonMethod), "", ReadJsonMethods.JSON)]
+    [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
     public string SecretJson { get; set; }
 
@@ -66,6 +66,6 @@ public class Connection
     /// Filepath to service account key file.
     /// </summary>
     /// <example>C:\temp\jsonfile.json</example>
-    [UIHint(nameof(ReadJsonMethods), "", ReadJsonMethods.File)]
+    [UIHint(nameof(ReadJsonMethod), "", ReadJsonMethods.File)]
     public string CredentialsFilePath { get; set; }
 }

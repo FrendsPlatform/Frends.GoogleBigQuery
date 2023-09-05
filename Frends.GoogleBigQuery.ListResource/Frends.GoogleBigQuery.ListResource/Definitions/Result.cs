@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace Frends.GoogleBigQuery.ListResource.Definitions;
+﻿namespace Frends.GoogleBigQuery.ListResource.Definitions;
 
 /// <summary>
 /// Task's result.
@@ -16,8 +14,8 @@ public class Result
     /// <summary>
     /// Data.
     /// </summary>
-    /// <example>{{  "datasets": [ { "datasetReference": { "datasetId": "tasktest", "projectId": "instant-stone-387712",... }}</example>
-    public JToken Data { get; private set; }
+    /// <example>{ "datasets": [ { "datasetReference": { "datasetId": "dataset", "projectId": "project", ... </example>
+    public dynamic Data { get; private set; }
 
     /// <summary>
     /// Error message.
@@ -25,7 +23,7 @@ public class Result
     /// <example>Error occured...</example>
     public string ErrorMessage { get; private set; }
 
-    internal Result(bool success, JToken data, string errorMessage)
+    internal Result(bool success, dynamic data, string errorMessage)
     {
         Success = success;
         Data = data;

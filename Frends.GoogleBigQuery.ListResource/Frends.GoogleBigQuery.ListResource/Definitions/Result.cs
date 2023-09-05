@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace Frends.GoogleBigQuery.List.Definitions;
+namespace Frends.GoogleBigQuery.ListResource.Definitions;
 
 /// <summary>
 /// Task's result.
@@ -16,7 +16,7 @@ public class Result
     /// <summary>
     /// Data.
     /// </summary>
-    /// <example>{{  "datasets": [ { "datasetReference": { "datasetId": "tasktest", "projectId": "instant-stone-387712",...</example>
+    /// <example>{{  "datasets": [ { "datasetReference": { "datasetId": "tasktest", "projectId": "instant-stone-387712",... }}</example>
     public JToken Data { get; private set; }
 
     /// <summary>

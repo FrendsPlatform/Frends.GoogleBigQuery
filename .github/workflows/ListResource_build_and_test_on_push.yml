@@ -1,18 +1,18 @@
-name: List build test
+name: ListResource build test
 
 on:
   push:
     branches-ignore: 
       - main
     paths:
-      - 'Frends.GoogleBigQuery.List/**'
+      - 'Frends.GoogleBigQuery.ListResource/**'
   workflow_dispatch:
 
 jobs:
   build:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_build_test.yml@main
     with:
-      workdir: Frends.GoogleBigQuery.List
+      workdir: Frends.GoogleBigQuery.ListResource
       env_var_name_1: BigQuery_SecretJson
     secrets:
       badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}

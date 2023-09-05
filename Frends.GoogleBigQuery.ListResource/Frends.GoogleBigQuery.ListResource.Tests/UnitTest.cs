@@ -1,8 +1,8 @@
-using Frends.GoogleBigQuery.List.Definitions;
+using Frends.GoogleBigQuery.ListResource.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 
-namespace Frends.GoogleBigQuery.List.Tests;
+namespace Frends.GoogleBigQuery.ListResource.Tests;
 
 [TestClass]
 public class UnitTest
@@ -47,7 +47,7 @@ public class UnitTest
     [TestMethod]
     public async Task List_Success_Datasets()
     {
-        var result = await GoogleBigQuery.List(_connection, _options, default);
+        var result = await GoogleBigQuery.ListResource(_connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.ErrorMessage);
@@ -61,7 +61,7 @@ public class UnitTest
         foreach (var item in allResourceTypes)
         {
             _connection.Resource = item;
-            var result = await GoogleBigQuery.List(_connection, _options, default);
+            var result = await GoogleBigQuery.ListResource(_connection, _options, default);
             Assert.IsTrue(result.Success, item.ToString());
             Assert.IsNotNull(result.Data, item.ToString());
             Assert.IsNull(result.ErrorMessage, item.ToString());
@@ -74,7 +74,7 @@ public class UnitTest
         _connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.List(_connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.ListResource(_connection, _options, default));
         Assert.IsNotNull(ex);
         Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
@@ -88,7 +88,7 @@ public class UnitTest
 
         _options.ThrowOnError = false;
 
-        var result = await GoogleBigQuery.List(_connection, _options, default);
+        var result = await GoogleBigQuery.ListResource(_connection, _options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNull(result.Data);
         Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
@@ -98,7 +98,7 @@ public class UnitTest
     public async Task List_Success_BaseUri()
     {
         _connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
-        var result = await GoogleBigQuery.List(_connection, _options, default);
+        var result = await GoogleBigQuery.ListResource(_connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.ErrorMessage);

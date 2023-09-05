@@ -1,4 +1,4 @@
-﻿namespace Frends.GoogleBigQuery.List.Definitions;
+﻿namespace Frends.GoogleBigQuery.ListResource.Definitions;
 #pragma warning disable CS1591 // Self explanatory
 
 /// <summary>

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Frends.GoogleBigQuery.List.Definitions;
+namespace Frends.GoogleBigQuery.ListResource.Definitions;
 
 /// <summary>
 /// Connection parameters.
@@ -18,7 +18,7 @@ public class Connection
     /// <summary>
     /// Resource.
     /// </summary>
-    /// <example>Components.Tables</example>
+    /// <example>Resources.Tables</example>
     [DefaultValue(Resources.Tables)]
     public Resources Resource { get; set; }
 
@@ -58,7 +58,7 @@ public class Connection
     /// }
     /// </example>
     [UIHint(nameof(ReadJsonMethods), "", ReadJsonMethods.JSON)]
-    [DisplayFormat(DataFormatString = "JSON")]
+    [DisplayFormat(DataFormatString = "Json")]
     [PasswordPropertyText]
     public string SecretJson { get; set; }
 

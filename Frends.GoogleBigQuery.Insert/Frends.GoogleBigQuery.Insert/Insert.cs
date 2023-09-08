@@ -93,7 +93,7 @@ public class GoogleBigQuery
 
                     if (values.Length != headers.Length)
                         throw new Exception("Number of values doesn't match the number of headers.");
-                    
+
                     for (var i = 0; i < headers.Length; i++)
                         rowData.Json[headers[i]] = values[i];
 

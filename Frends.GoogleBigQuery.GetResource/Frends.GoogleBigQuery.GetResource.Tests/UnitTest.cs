@@ -81,6 +81,46 @@ public class UnitTest
     }
 
     [TestMethod]
+    public async Task Get_Success_Tables_ViewsFull()
+    {
+        _connection.View = Views.Full;
+        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        Assert.IsTrue(result.Success);
+        Assert.IsNotNull(result.Data);
+        Assert.IsNull(result.ErrorMessage);
+    }
+
+    [TestMethod]
+    public async Task Get_Success_Tables_ViewsBasic()
+    {
+        _connection.View = Views.Basic;
+        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        Assert.IsTrue(result.Success);
+        Assert.IsNotNull(result.Data);
+        Assert.IsNull(result.ErrorMessage);
+    }
+
+    [TestMethod]
+    public async Task Get_Success_Tables_ViewsTablemetadataviewunspecified()
+    {
+        _connection.View = Views.Tablemetadataviewunspecified;
+        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        Assert.IsTrue(result.Success);
+        Assert.IsNotNull(result.Data);
+        Assert.IsNull(result.ErrorMessage);
+    }
+
+    [TestMethod]
+    public async Task Get_Success_Tables_ViewsStoragestats()
+    {
+        _connection.View = Views.Storagestats;
+        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        Assert.IsTrue(result.Success);
+        Assert.IsNotNull(result.Data);
+        Assert.IsNull(result.ErrorMessage);
+    }
+
+    [TestMethod]
     public async Task Get_Invalid_SecretJson_Throw()
     {
         _connection.SecretJson = @"{ 

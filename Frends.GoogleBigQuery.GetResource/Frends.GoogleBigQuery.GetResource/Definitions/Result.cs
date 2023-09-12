@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace Frends.GoogleBigQuery.GetResource.Definitions;
+﻿namespace Frends.GoogleBigQuery.GetResource.Definitions;
 
 /// <summary>
 /// Task's result.
@@ -14,10 +12,10 @@ public class Result
     public bool Success { get; private set; }
 
     /// <summary>
-    /// Request content as Get of DataSets.
+    /// Data as JToken.
     /// </summary>
     /// <example>{{	"access": [ { "dataset": null, "domain": null, "groupByEmail": null ...	}}</example>
-    public JsonElement? Data { get; private set; }
+    public dynamic Data { get; private set; }
 
     /// <summary>
     /// Error message.
@@ -25,7 +23,7 @@ public class Result
     /// <example>Error occured...</example>
     public string ErrorMessage { get; private set; }
 
-    internal Result(bool success, JsonElement? data, string errorMessage)
+    internal Result(bool success, dynamic data, string errorMessage)
     {
         Success = success;
         Data = data;

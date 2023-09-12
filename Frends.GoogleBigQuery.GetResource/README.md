@@ -1,5 +1,5 @@
 # Frends.GoogleBigQuery.GetResource
-Frends Task to Google BigQuery GET resource.
+Frends Task to get Google BigQuery resource.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) 
 [![Build](https://github.com/FrendsPlatform/Frends.GoogleBigQuery/actions/workflows/GetResource_build_and_test_on_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.GoogleBigQuery/actions)

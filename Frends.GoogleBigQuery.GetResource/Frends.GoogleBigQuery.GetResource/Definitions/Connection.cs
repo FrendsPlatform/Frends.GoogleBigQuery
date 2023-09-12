@@ -31,13 +31,13 @@ public class Connection
     /// <summary>
     /// Dataset ID.
     /// </summary>
-    /// <example>bigquery-public-data.baseball</example>
+    /// <example>baseball</example>
     public string DatasetId { get; set; }
 
     /// <summary>
     /// Table ID.
     /// </summary>
-    /// <example>bigquery-public-data.baseball.games_post_wide</example>
+    /// <example>games_post_wide</example>
     public string TableId { get; set; }
 
     /// <summary>
@@ -49,13 +49,13 @@ public class Connection
     /// <summary>
     /// Model ID.
     /// </summary>
-    /// <example>my_project.my_dataset.my_model</example>
+    /// <example>my_model</example>
     public string ModelId { get; set; }
 
     /// <summary>
     /// Routine ID.
     /// </summary>
-    /// <example>my_project.my_dataset.my_routine</example>
+    /// <example>my_routine</example>
     public string RoutineId { get; set; }
 
     /// <summary>

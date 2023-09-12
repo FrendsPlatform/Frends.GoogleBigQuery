@@ -59,7 +59,7 @@ public class UnitTest
             Tag = new[] { new TagParameters() { Key = "key", Value = "value" } },
 
             //Routines
-            RoutineId = $"newroutine_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}",
+            RoutineId = null,
             Argument = new[] { new ArgumentParameters() { DataType = "Int64", Name = "x", ArgumentKind = ArgumentKindOptions.FIXED_TYPE } },
             DefinitionBody = "(x * 3)",
             SetRemoteFunctionParameters = false,
@@ -95,7 +95,7 @@ public class UnitTest
                     Type = "STRING"
                 }
             },
-            TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}",
+            TableId = null,
             TimeField = "BDAY",
             Partition = TablePartitionOptions.RangePartitioning,
             TimeRequirePartitionFilter = false,
@@ -139,6 +139,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Table()
     {
+        _input.TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_1";
         _input.Resource = Resources.Table;
 
         var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
@@ -150,6 +151,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Table_TimePartitioning_Day()
     {
+        _input.TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_2";
         _input.Resource = Resources.Table;
         _input.Partition = TablePartitionOptions.TimePartitioning;
 
@@ -162,6 +164,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Table_TimePartitioning_MONTH()
     {
+        _input.TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_3";
         _input.Resource = Resources.Table;
         _input.Partition = TablePartitionOptions.TimePartitioning;
         _input.Type = TimeTypeOptions.MONTH;
@@ -175,6 +178,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Table_TimePartitioning_YEAR()
     {
+        _input.TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_4";
         _input.Resource = Resources.Table;
         _input.Partition = TablePartitionOptions.TimePartitioning;
         _input.Type = TimeTypeOptions.YEAR;
@@ -188,6 +192,8 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Table_Bool()
     {
+        _input.TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_5";
+        _input.RoutineId = $"table_bool{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}";
         _input.Resource = Resources.Table;
         _input.RequirePartitionFilter = true;
 
@@ -200,6 +206,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Routine()
     {
+        _input.RoutineId = $"newroutine_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_1";
         _input.Resource = Resources.Routine;
 
         var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
@@ -211,6 +218,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Routine_NOT_DETERMINISTIC()
     {
+        _input.RoutineId = $"newroutine_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_2";
         _input.Resource = Resources.Routine;
         _input.DefinitionBody = "function multiplyByThree(x) { return x * 3; }";
         _input.Language = "JAVASCRIPT";
@@ -225,6 +233,7 @@ public class UnitTest
     [TestMethod]
     public async Task Create_Routine_DETERMINISTIC()
     {
+        _input.RoutineId = $"newroutine_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_3";
         _input.Resource = Resources.Routine;
         _input.DefinitionBody = "function multiplyByThree(x) { return x * 3; }";
         _input.Language = "JAVASCRIPT";

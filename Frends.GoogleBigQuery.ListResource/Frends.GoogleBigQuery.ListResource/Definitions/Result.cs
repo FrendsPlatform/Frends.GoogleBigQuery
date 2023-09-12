@@ -12,7 +12,7 @@ public class Result
     public bool Success { get; private set; }
 
     /// <summary>
-    /// Data.
+    /// Data as JToken.
     /// </summary>
     /// <example>{ "datasets": [ { "datasetReference": { "datasetId": "dataset", "projectId": "project", ... </example>
     public dynamic Data { get; private set; }

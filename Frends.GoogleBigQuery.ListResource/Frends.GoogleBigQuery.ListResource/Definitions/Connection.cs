@@ -31,13 +31,13 @@ public class Connection
     /// <summary>
     /// Dataset ID.
     /// </summary>
-    /// <example>bigquery-public-data.baseball</example>
+    /// <example>baseball</example>
     public string DatasetId { get; set; }
 
     /// <summary>
     /// Table ID.
     /// </summary>
-    /// <example>bigquery-public-data.baseball.games_post_wide</example>
+    /// <example>games_post_wide</example>
     public string TableId { get; set; }
 
     /// <summary>

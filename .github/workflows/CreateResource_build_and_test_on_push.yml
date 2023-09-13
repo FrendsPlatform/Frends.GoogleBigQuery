@@ -1,4 +1,4 @@
-name: Create build test
+name: CreateResource build test
 
 on:
   push:

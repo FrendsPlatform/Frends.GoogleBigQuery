@@ -26,6 +26,7 @@ public class TableSchemaParameters
     /// <summary>
     /// Name.
     /// </summary>
+    /// <example>Name</example>
     public string Name { get; set; }
 
     /// <summary>
@@ -33,30 +34,6 @@ public class TableSchemaParameters
     /// </summary>
     /// <example>STRING</example>
     public string Type { get; set; }
-}
-
-/// <summary>
-/// TableReferenceParameters.
-/// </summary>
-public class TableReferenceParameters
-{
-    /// <summary>
-    /// Project ID.
-    /// </summary>
-    /// <example>global-env-397309</example>
-    public string ProjectId { get; set; }
-
-    /// <summary>
-    /// Dataset ID.
-    /// </summary>
-    /// <example>bigquery-public-data.baseball</example>
-    public string DatasetId { get; set; }
-
-    /// <summary>
-    /// Table ID.
-    /// </summary>
-    /// <example>bigquery-public-data.baseball.games_post_wide</example>
-    public string TableId { get; set; }
 }
 
 /// <summary>
@@ -130,13 +107,6 @@ public class RemoteFunctionParameters
     /// </summary>
     /// <example>0</example>
     public long MaxBatchingRows { get; set; }
-
-    /// <summary>
-    /// User-defined context as a set of key/value pairs, which will be sent as function invocation context together with batched arguments in the requests to the remote service. 
-    /// The total number of bytes of keys and values must be less than 8KB.
-    /// </summary>
-    /// <example>[ { foo, bar }, { foo2, bar2 } ]</example>
-    public UserDefinedContext[] UserDefinedContext { get; set; }
 }
 
 /// <summary>

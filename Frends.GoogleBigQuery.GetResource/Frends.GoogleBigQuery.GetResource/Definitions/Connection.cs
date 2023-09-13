@@ -43,7 +43,7 @@ public class Connection
     /// <summary>
     /// Job ID.
     /// </summary>
-    /// <example>job_XYzA1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U</example>
+    /// <example>my_job</example>
     public string JobId { get; set; }
 
     /// <summary>

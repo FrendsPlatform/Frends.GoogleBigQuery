@@ -39,7 +39,7 @@ public class UnitTest
             JobId = null,
             ModelId = null,
             ReadMask = null,
-            RoutineId = null,
+            RoutineId = "newroutine_x_2023_09_12_11_46_44",
             SelectedFields = null,
             View = Views.Storagestats
         };
@@ -53,6 +53,29 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Datasets()
     {
+        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        Assert.IsTrue(result.Success);
+        Assert.IsNotNull(result.Data);
+        Assert.IsNull(result.ErrorMessage);
+    }
+
+    [TestMethod]
+    public async Task Get_Success_Routines()
+    {
+        _connection.Resource = Resources.Routines;
+
+        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        Assert.IsTrue(result.Success);
+        Assert.IsNotNull(result.Data);
+        Assert.IsNull(result.ErrorMessage);
+    }
+
+    [TestMethod]
+    public async Task Get_Success_Routines_ReadMask()
+    {
+        _connection.Resource = Resources.Routines;
+        _connection.ReadMask = "Description";
+
         var result = await GoogleBigQuery.GetResource(_connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);

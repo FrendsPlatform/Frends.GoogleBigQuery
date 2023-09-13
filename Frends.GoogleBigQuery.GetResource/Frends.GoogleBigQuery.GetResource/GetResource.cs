@@ -56,6 +56,7 @@ public class GoogleBigQuery
         }
     }
 
+    //[ExcludeFromCodeCoverage(Justification = "Can't use JSON file in CI.")]
     private static async Task<ServiceAccountCredential> GetServiceAccountCredential(Connection connection, CancellationToken cancellationToken)
     {
         var jsonCredentials = connection.ReadJsonMethod == ReadJsonMethods.File ? await File.ReadAllTextAsync(connection.CredentialsFilePath, cancellationToken) : connection.SecretJson;

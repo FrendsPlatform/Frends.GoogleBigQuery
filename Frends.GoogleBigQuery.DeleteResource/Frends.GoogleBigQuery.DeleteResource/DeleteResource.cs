@@ -67,7 +67,7 @@ public class GoogleBigQuery
         return credential;
     }
 
-    private static async Task<bool> ListRequest(BigqueryService service, Connection connection, CancellationToken cancellationToken)
+    private static async Task<bool> DeleteRequest(BigqueryService service, Connection connection, CancellationToken cancellationToken)
     {
         switch (connection.Resource)
         {

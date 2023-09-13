@@ -36,7 +36,7 @@ public class GoogleBigQuery
             var bigqueryService = new BigqueryService(serviceInitializer);
 
             if (bigqueryService is not null)
-                return new Result(await ListRequest(new BigqueryService(serviceInitializer), connection, cancellationToken), null);
+                return new Result(await DeleteRequest(new BigqueryService(serviceInitializer), connection, cancellationToken), null);
             else
             {
                 if (options.ThrowOnError)

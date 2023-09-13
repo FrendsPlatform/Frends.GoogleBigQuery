@@ -104,7 +104,7 @@ public class Connection
     /// }
     /// </example>
     [UIHint(nameof(ReadJsonMethods), "", ReadJsonMethods.JSON)]
-    [DisplayFormat(DataFormatString = "JSON")]
+    [DisplayFormat(DataFormatString = "Text")]
     [PasswordPropertyText]
     public string SecretJson { get; set; }
 

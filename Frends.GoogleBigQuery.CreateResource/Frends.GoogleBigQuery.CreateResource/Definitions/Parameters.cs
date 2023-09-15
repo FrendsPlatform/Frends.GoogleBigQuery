@@ -85,31 +85,6 @@ public class AccessParameters
 }
 
 /// <summary>
-/// RemoteFunctionParameters.
-/// </summary>
-public class RemoteFunctionParameters
-{
-    /// <summary>
-    /// Fully qualified name of the user-provided connection object which holds the authentication information to send requests to the remote service.
-    /// </summary>
-    /// <example>projects/{projectId}/locations/{locationId}/connections/{connectionId}</example>
-    public string Connection { get; set; }
-
-    /// <summary>
-    /// Endpoint of the user-provided remote service.
-    /// </summary>
-    /// <example>https://us-east1-my_gcf_project.cloudfunctions.net/remote_add</example>
-    public string Endpoint { get; set; }
-
-    /// <summary>
-    /// Max number of rows in each batch sent to the remote service. 
-    /// If 0, BigQuery dynamically decides the number of rows in a batch.
-    /// </summary>
-    /// <example>0</example>
-    public long MaxBatchingRows { get; set; }
-}
-
-/// <summary>
 /// UserDefinedContext.
 /// </summary>
 public class UserDefinedContext
@@ -159,5 +134,4 @@ public class ArgumentParameters
     /// </summary>
     /// <example>ArgumentKindOptions.FIXED_TYPE</example>
     public ArgumentKindOptions ArgumentKind { get; set; }
-
 }

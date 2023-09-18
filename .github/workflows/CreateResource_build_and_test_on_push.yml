@@ -1,0 +1,22 @@
+name: CreateResource build test
+
+on:
+  push:
+    branches-ignore: 
+      - main
+    paths:
+      - 'Frends.GoogleBigQuery.CreateResource/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: FrendsPlatform/FrendsTasks/.github/workflows/linux_build_test.yml@main
+    with:
+      workdir: Frends.GoogleBigQuery.CreateResource
+      env_var_name_1: BigQuery_SecretJson
+      env_var_name_2: Frends_TestUser_Email
+    secrets:
+      badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
+      test_feed_api_key: ${{ secrets.TASKS_TEST_FEED_API_KEY }}
+      env_var_value_1: ${{ secrets.BIGQUERY_SECRETJSON }}
+      env_var_value_2: ${{ secrets.FRENDS_TESTUSER_EMAIL }}

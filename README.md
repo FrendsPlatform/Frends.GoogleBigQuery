@@ -3,6 +3,7 @@ Frends Task for Google BigQuery operations.
 
 # Tasks
 
+- [Frends.GoogleBigQuery.CreateResource](Frends.GoogleBigQuery.CreateResource/README.md)
 - [Frends.GoogleBigQuery.Insert](Frends.GoogleBigQuery.Insert/README.md)
 - [Frends.GoogleBigQuery.GetResource](Frends.GoogleBigQuery.GetResource/README.md)
 - [Frends.GoogleBigQuery.ListResource](Frends.GoogleBigQuery.ListResource/README.md)

@@ -125,6 +125,7 @@ public class UnitTests
 
         _input = new Input()
         {
+            Resource = Resources.Dataset,
             Description = "This is updated Description.",
             FriendlyName = "This is updated FriendlyName.",
             Label = new[] { new LabelParameters() { Key = "updatedkey", Value = "updatedvalue" } },
@@ -145,12 +146,12 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Routine()
     {
-        _input.Resource = Resources.Routine;
         await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
         await CreateRoutineResource(_connection.ProjectId, _connection.DatasetId, _connection.RoutineId, _connection.SecretJson);
 
         _input = new()
         {
+            Resource = Resources.Routine,
             Argument = new[] { new ArgumentParameters() { DataType = "Int64", Name = "y", ArgumentKind = ArgumentKindOptions.FIXED_TYPE } }, //Name = "y"
             DefinitionBody = "(y * 3)", //"(x * 3)"
             SetRemoteFunctionParameters = false,
@@ -175,12 +176,12 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Table()
     {
-        _input.Resource = Resources.Table;
         await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
         await CreateTableResource(_connection.ProjectId, _connection.DatasetId, _connection.TableId, _connection.SecretJson);
 
         _input = new()
         {
+            Resource = Resources.Table,
             RequirePartitionFilter = true, //false
             TableSchema = new[] {
                 new TableSchemaParameters() {

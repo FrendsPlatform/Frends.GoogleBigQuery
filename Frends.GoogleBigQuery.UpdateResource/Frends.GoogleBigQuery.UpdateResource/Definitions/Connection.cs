@@ -16,13 +16,6 @@ public class Connection
     public string BaseUri { get; set; }
 
     /// <summary>
-    /// Resource.
-    /// </summary>
-    /// <example>Resources.Tables</example>
-    [DefaultValue(Resources.Table)]
-    public Resources Resource { get; set; }
-
-    /// <summary>
     /// Project ID.
     /// </summary>
     /// <example>global-env-397309</example>
@@ -38,14 +31,12 @@ public class Connection
     /// Table ID.
     /// </summary>
     /// <example>games_post_wide</example>
-    [UIHint(nameof(Resource), "", Resources.Table)]
     public string TableId { get; set; }
 
     /// <summary>
     /// The ID of the routine.
     /// </summary>
     /// <example>routine</example>
-    [UIHint(nameof(Resource), "", Resources.Routine)]
     public string RoutineId { get; set; }
 
     /// <summary>

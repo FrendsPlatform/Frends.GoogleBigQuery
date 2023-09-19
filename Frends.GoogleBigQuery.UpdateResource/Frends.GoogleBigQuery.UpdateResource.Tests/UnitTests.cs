@@ -103,7 +103,6 @@ public class UnitTests
         _connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
-            Resource = Resources.Dataset,
             SecretJson = json,
             ProjectId = _projectId,
             DatasetId = _datasetId,
@@ -146,7 +145,7 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Routine()
     {
-        _connection.Resource = Resources.Routine;
+        _input.Resource = Resources.Routine;
         await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
         await CreateRoutineResource(_connection.ProjectId, _connection.DatasetId, _connection.RoutineId, _connection.SecretJson);
 
@@ -176,7 +175,7 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Table()
     {
-        _connection.Resource = Resources.Table;
+        _input.Resource = Resources.Table;
         await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
         await CreateTableResource(_connection.ProjectId, _connection.DatasetId, _connection.TableId, _connection.SecretJson);
 

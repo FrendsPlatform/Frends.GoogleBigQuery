@@ -51,18 +51,16 @@ public class Input
     [UIHint(nameof(SetEncryptionConfiguration), "", true)]
     public string KmsKeyName { get; set; }
 
-    #region Dataset specific
-
     /// <summary>
-    /// The geographic location where the dataset should reside. 
+    /// The geographic location where the resource should reside. 
     /// See details at https://cloud.google.com/bigquery/docs/locations
     /// </summary>
     /// <example>europe-north1</example>
-    [UIHint(nameof(Resource), "", Resources.Dataset)]
     [DisplayFormat(DataFormatString = "Text")]
     [DefaultValue("EU")]
     public string Location { get; set; }
 
+    #region Dataset specific
     /// <summary>
     /// Storage billing model to be used for all tables in the dataset.
     /// Can be set to PHYSICAL. 

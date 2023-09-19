@@ -28,6 +28,15 @@ public class Input
     public string FriendlyName { get; set; }
 
     /// <summary>
+    /// The geographic location where the resource should reside. 
+    /// See details at https://cloud.google.com/bigquery/docs/locations
+    /// </summary>
+    /// <example>europe-north1</example>
+    [DisplayFormat(DataFormatString = "Text")]
+    [DefaultValue("EU")]
+    public string Location { get; set; }
+
+    /// <summary>
     /// Label(s) for Dataset or Table resource. (Optional)
     /// Label keys and values can be no longer than 63 characters, can only contain lowercase letters, numeric characters, underscores and dashes. 
     /// International characters are allowed. 
@@ -50,15 +59,6 @@ public class Input
     /// <example>projects/your-project/locations/global/keyRings/your-key-ring/cryptoKeys/your-key</example>
     [UIHint(nameof(SetEncryptionConfiguration), "", true)]
     public string KmsKeyName { get; set; }
-
-    /// <summary>
-    /// The geographic location where the resource should reside. 
-    /// See details at https://cloud.google.com/bigquery/docs/locations
-    /// </summary>
-    /// <example>europe-north1</example>
-    [DisplayFormat(DataFormatString = "Text")]
-    [DefaultValue("EU")]
-    public string Location { get; set; }
 
     #region Dataset specific
     /// <summary>

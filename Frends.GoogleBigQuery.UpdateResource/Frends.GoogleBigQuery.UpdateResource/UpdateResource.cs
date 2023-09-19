@@ -75,7 +75,7 @@ public class GoogleBigQuery
     private static async Task<bool> UpdateRequest(BigqueryService service, Connection connection, Input input, CancellationToken cancellationToken)
     {
         Dictionary<string, string> labels = new();
-        switch (connection.Resource)
+        switch (input.Resource)
         {
             case Resources.Dataset:
                 List<Dataset.AccessData> accessList = new();

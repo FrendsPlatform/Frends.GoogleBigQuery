@@ -1,5 +1,4 @@
-﻿using Frends.GoogleBigQuery.UpdateResource.Definitions;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Frends.GoogleBigQuery.UpdateResource.Definitions;

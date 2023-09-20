@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFrameworks>net6.0</TargetFrameworks>
+	<Version>1.0.0</Version>
+	<Authors>Frends</Authors>
+	<Copyright>Frends</Copyright>
+	<Company>Frends</Company>
+	<Product>Frends</Product>
+	<PackageTags>Frends</PackageTags>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<Description>Frends Task to execute Google BigQuery query.</Description>
+	<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/FrendsPlatform/Frends.GoogleBigQuery</RepositoryUrl>
+  </PropertyGroup>
+	
+  <ItemGroup>
+	  <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.61.0.3155" />
+    <PackageReference Include="Google.Cloud.BigQuery.V2" Version="3.4.0" />
+  </ItemGroup>
+</Project>

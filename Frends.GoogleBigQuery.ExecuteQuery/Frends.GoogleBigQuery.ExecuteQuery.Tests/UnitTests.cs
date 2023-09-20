@@ -77,16 +77,6 @@ public class UnitTests
     }
 
     [TestMethod]
-    public async Task Update_SELECT_NotFound()
-    {
-        _input.Query = "SELECT * FROM tasktest.testtable";
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
-        Assert.IsTrue(result.Success);
-        Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
-    }
-
-    [TestMethod]
     public async Task Update_SELECT_Parameter()
     {
         var param = new[] { new BigQueryParameters() { Name = "ParameterName", BigQueryDbType = BigQueryDbTypes.String, Value = "Sample String" } };

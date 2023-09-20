@@ -1,6 +1,4 @@
-﻿using Frends.GoogleBigQuery.PatchResource.Definitions;
-
-namespace Frends.GoogleBigQuery.PatchResource.Definitions;
+﻿namespace Frends.GoogleBigQuery.PatchResource.Definitions;
 
 /// <summary>
 /// TagParameters.

@@ -20,37 +20,6 @@ public enum ReadJsonMethods
 }
 
 /// <summary>
-/// DeterminismLevels.
-/// </summary>
-public enum DeterminismLevels
-{
-    /// <summary>
-    /// The determinism of the UDF is unspecified.
-    /// </summary>
-    DETERMINISM_LEVEL_UNSPECIFIED,
-
-    /// <summary>
-    /// The UDF is deterministic, meaning that 2 function calls with the same inputs always produce the same result, even across 2 query runs.
-    /// </summary>
-    DETERMINISTIC,
-
-    /// <summary>
-    /// The UDF is not deterministic.
-    /// </summary>
-    NOT_DETERMINISTIC
-}
-
-/// <summary>
-/// Routine types.
-/// </summary>
-public enum RoutineTypes
-{
-    SCALAR_FUNCTION,
-    PROCEDURE,
-    TABLE_FUNCTION
-}
-
-/// <summary>
 /// TablePartitionOptions
 /// </summary>
 public enum TablePartitionOptions

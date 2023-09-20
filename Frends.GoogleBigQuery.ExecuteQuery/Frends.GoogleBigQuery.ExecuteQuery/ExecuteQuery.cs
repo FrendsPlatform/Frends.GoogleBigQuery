@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -105,6 +106,7 @@ public class GoogleBigQuery
         return jsonArray;
     }
 
+    [ExcludeFromCodeCoverage(Justification = "Can't test them all.")]
     private static BigQueryDbType? GetBigQueryDbType(BigQueryDbTypes bigQueryDbType)
     {
         return bigQueryDbType switch

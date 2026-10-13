@@ -1,15 +1,15 @@
-using Frends.GoogleBigQuery.UpdateResource.Definitions;
-using Frends.GoogleBigQuery.UpdateResource.Helpers;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Bigquery.v2;
-using Google.Apis.Bigquery.v2.Data;
-using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Frends.GoogleBigQuery.UpdateResource.Definitions;
+using Frends.GoogleBigQuery.UpdateResource.Helpers;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Bigquery.v2;
+using Google.Apis.Bigquery.v2.Data;
+using Google.Apis.Services;
 
 namespace Frends.GoogleBigQuery.UpdateResource;
 
@@ -19,7 +19,7 @@ namespace Frends.GoogleBigQuery.UpdateResource;
 public static class GoogleBigQuery
 {
     /// <summary>
-    /// Updates information in an existing resource. 
+    /// Updates information in an existing resource.
     /// The update method replaces the entire resource, whereas the patch method only replaces fields that are provided in the submitted resource.
     /// [Documentation](https://tasks.frends.com/tasks/frends-tasks/Frends.GoogleBigQuery.UpdateResource)
     /// </summary>
@@ -52,7 +52,6 @@ public static class GoogleBigQuery
     {
         var jsonCredentials = connection.ReadJsonMethod == ReadJsonMethods.File ? await File.ReadAllTextAsync(connection.CredentialsFilePath, cancellationToken) : connection.SecretJson;
 
-
         ServiceAccountCredential credential;
         using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonCredentials));
         credential = GoogleCredential.FromStream(stream)
@@ -72,20 +71,28 @@ public static class GoogleBigQuery
                 List<Dataset.TagsData> tags = new();
 
                 if (input.Access is not null)
+                {
                     foreach (var param in input.Access)
+                    {
                         accessList.Add(new()
                         {
                             Role = param.Role,
-                            UserByEmail = param.UserByEmail
+                            UserByEmail = param.UserByEmail,
                         });
+                    }
+                }
 
                 if (input.Label is not null)
+                {
                     foreach (var param in input.Label)
                         labels.Add(param.Key, param.Value);
+                }
 
                 if (input.Tag is not null)
+                {
                     foreach (var param in input.Tag)
                         tags.Add(new Dataset.TagsData { TagKey = param.Key, TagValue = param.Value });
+                }
 
                 Dataset dataset = new()
                 {
@@ -112,7 +119,9 @@ public static class GoogleBigQuery
                 List<string> importedLibraries = new();
 
                 if (input.Argument is not null)
+                {
                     foreach (var param in input.Argument)
+                    {
                         args.Add(new Argument()
                         {
                             Name = string.IsNullOrWhiteSpace(param.Name) ? null : param.Name,
@@ -120,14 +129,20 @@ public static class GoogleBigQuery
                             DataType = new StandardSqlDataType { TypeKind = param.DataType.ToUpper() },
                             ArgumentKind = param.ArgumentKind.ToString().ToUpper(),
                         });
+                    }
+                }
 
                 if (input.RemoteUserDefinedContext is not null)
+                {
                     foreach (var param in input.RemoteUserDefinedContext)
                         userDefinedContext.Add(param.Key, param.Value);
+                }
 
                 if (input.ImportedLibrary is not null)
+                {
                     foreach (var param in input.ImportedLibrary)
                         importedLibraries.Add(param.Value);
+                }
 
                 Routine routine = new()
                 {
@@ -149,6 +164,7 @@ public static class GoogleBigQuery
                 };
 
                 if (input.SetRemoteFunctionParameters)
+                {
                     routine.RemoteFunctionOptions = new()
                     {
                         Connection = input.RemoteConnection,
@@ -156,6 +172,7 @@ public static class GoogleBigQuery
                         Endpoint = input.RemoteEndpoint,
                         MaxBatchingRows = input.RemoteMaxBatchingRows,
                     };
+                }
 
                 await service.Routines.Update(routine, connection.ProjectId, connection.DatasetId, connection.RoutineId).ExecuteAsync(cancellationToken);
                 return true;
@@ -166,19 +183,23 @@ public static class GoogleBigQuery
                 if (input.TableSchema is not null)
                 {
                     foreach (var param in input.TableSchema)
+                    {
                         tableFieldSchema.Add(
                             new TableFieldSchema
                             {
                                 Name = param.Name,
                                 Type = param.Type.ToUpper(),
                             });
+                    }
 
                     tableSchema.Fields = tableFieldSchema;
                 }
 
                 if (input.Label is not null)
+                {
                     foreach (var param in input.Label)
                         labels.Add(param.Key, param.Value);
+                }
 
                 Table table = new()
                 {
@@ -186,11 +207,11 @@ public static class GoogleBigQuery
                     {
                         ProjectId = connection.ProjectId,
                         DatasetId = connection.DatasetId,
-                        TableId = connection.TableId
+                        TableId = connection.TableId,
                     },
                     EncryptionConfiguration = !input.SetEncryptionConfiguration ? null : new EncryptionConfiguration
                     {
-                        KmsKeyName = input.KmsKeyName
+                        KmsKeyName = input.KmsKeyName,
                     },
                     RequirePartitionFilter = input.RequirePartitionFilter,
                     Schema = tableSchema is null ? null : tableSchema,
@@ -201,6 +222,7 @@ public static class GoogleBigQuery
                 };
 
                 if (input.Partition is TablePartitionOptions.RangePartitioning)
+                {
                     table.RangePartitioning = new RangePartitioning()
                     {
                         Field = input.RangeField.ToUpper(),
@@ -209,16 +231,19 @@ public static class GoogleBigQuery
                             Start = input.RangeStart,
                             End = input.RangeEnd,
                             Interval = input.RangeInterval,
-                        }
+                        },
                     };
+                }
                 else
+                {
                     table.TimePartitioning = new TimePartitioning()
                     {
                         RequirePartitionFilter = input.TimeRequirePartitionFilter,
                         ExpirationMs = input.ExpirationMs,
                         Field = input.TimeField,
-                        Type = input.Type.ToString()
+                        Type = input.Type.ToString(),
                     };
+                }
 
                 await service.Tables.Update(table, connection.ProjectId, connection.DatasetId, connection.TableId).ExecuteAsync(cancellationToken);
                 return true;

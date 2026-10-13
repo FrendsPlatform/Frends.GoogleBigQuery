@@ -46,7 +46,7 @@ public class Input
     public string RoutineId { get; set; }
 
     /// <summary>
-    /// If set, only the Routine fields in the field mask are returned in the response. 
+    /// If set, only the Routine fields in the field mask are returned in the response.
     /// If unset, all Routine fields are returned.
     /// This is a comma-separated list of fully qualified names of fields.
     /// </summary>
@@ -55,9 +55,9 @@ public class Input
     public string ReadMask { get; set; }
 
     /// <summary>
-    /// Table schema fields to return (comma-separated). 
-    /// If unspecified, all fields are returned. 
-    /// A fieldMask cannot be used here because the fields will automatically be converted from camelCase to snake_case and the conversion will fail if there are underscores. 
+    /// Table schema fields to return (comma-separated).
+    /// If unspecified, all fields are returned.
+    /// A fieldMask cannot be used here because the fields will automatically be converted from camelCase to snake_case and the conversion will fail if there are underscores.
     /// Since these are fields in BigQuery table schemas, underscores are allowed.
     /// </summary>
     /// <example>foo,bar</example>
@@ -65,7 +65,7 @@ public class Input
     public string SelectedFields { get; set; }
 
     /// <summary>
-    /// Specifies the view that determines which table information is returned. 
+    /// Specifies the view that determines which table information is returned.
     /// By default, basic table information and storage statistics (STORAGE_STATS) are returned.
     /// </summary>
     /// <example>Views.Storagestats</example>

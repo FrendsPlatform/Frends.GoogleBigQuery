@@ -1,8 +1,3 @@
-using Frends.GoogleBigQuery.ExecuteQuery.Definitions;
-using Frends.GoogleBigQuery.ExecuteQuery.Helpers;
-using Google.Apis.Auth.OAuth2;
-using Google.Cloud.BigQuery.V2;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Frends.GoogleBigQuery.ExecuteQuery.Definitions;
+using Frends.GoogleBigQuery.ExecuteQuery.Helpers;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.BigQuery.V2;
+using Newtonsoft.Json.Linq;
 
 namespace Frends.GoogleBigQuery.ExecuteQuery;
 
@@ -57,7 +57,7 @@ public static class GoogleBigQuery
     {
         List<BigQueryParameter> parameters = new();
         JArray jsonArray = new();
-        var exceptionMsg = "";
+        var exceptionMsg = string.Empty;
 
         if (input.BigQueryParameter != null)
             parameters = input.BigQueryParameter.Select(param => new BigQueryParameter(param.Name, GetBigQueryDbType(param.BigQueryDbType), param.Value)).ToList();
@@ -88,7 +88,6 @@ public static class GoogleBigQuery
                         jsonArray.Add(jsonObject);
                 }
 
-
                 success = true;
                 break;
             }
@@ -98,6 +97,7 @@ public static class GoogleBigQuery
                 await Task.Delay(options.Delay, cancellationToken);
             }
         }
+
         if (!success)
             throw new Exception(@$"Query execution failed after maximum retry attempts. Error: {exceptionMsg}");
 

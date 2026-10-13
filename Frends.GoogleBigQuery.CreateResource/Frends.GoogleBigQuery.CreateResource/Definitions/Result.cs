@@ -5,6 +5,13 @@ namespace Frends.GoogleBigQuery.CreateResource.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, string url, Error error = null)
+    {
+        Success = success;
+        Url = url;
+        Error = error;
+    }
+
     /// <summary>
     /// Operation complete without errors.
     /// </summary>
@@ -23,11 +30,4 @@ public class Result
     /// </summary>
     /// <example>null</example>
     public Error Error { get; private set; }
-
-    internal Result(bool success, string url, Error error = null)
-    {
-        Success = success;
-        Url = url;
-        Error = error;
-    }
 }

@@ -1,3 +1,4 @@
+using System.Text;
 using Frends.GoogleBigQuery.ExecuteQuery.Definitions;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Bigquery.v2;
@@ -5,72 +6,73 @@ using Google.Apis.Bigquery.v2.Data;
 using Google.Apis.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace Frends.GoogleBigQuery.ExecuteQuery.Tests;
 
 [TestClass]
 public class UnitTests
 {
-    private Input _input = new();
-    private Connection _connection = new();
-    private Options _options = new();
-    private readonly string? _secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
-    private readonly string _projectId = "instant-stone-387712";
+    private readonly string? secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
+    private readonly string projectId = "instant-stone-387712";
+    private Input input = new();
+    private Connection connection = new();
+    private Options options = new();
 
     [TestInitialize]
     public async Task Init()
     {
-        var _datasetId = $"tasktest_dataset_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
-        var _tableId = $"tasktest_tableid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var datasetId = $"tasktest_dataset_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var tableId = $"tasktest_tableid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
         string json;
 
         // This one is to handle CI secret problems.
-        if (File.Exists(_secretJson))
-            json = File.ReadAllText(_secretJson);
+        if (File.Exists(secretJson))
+        {
+            json = File.ReadAllText(secretJson);
+        }
         else
         {
-            var _json = !string.IsNullOrEmpty(_secretJson) ? _secretJson : "";
-            byte[] bytes = Convert.FromBase64String(_json);
+            var encodedJson = !string.IsNullOrEmpty(secretJson) ? secretJson : string.Empty;
+            byte[] bytes = Convert.FromBase64String(encodedJson);
             json = Encoding.UTF8.GetString(bytes);
         }
 
-        _connection = new()
+        connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
             SecretJson = json,
-            ProjectId = _projectId,
-            DatasetId = _datasetId,
-            TableId = _tableId,
+            ProjectId = projectId,
+            DatasetId = datasetId,
+            TableId = tableId,
             CredentialsFilePath = null,
         };
 
-        _input = new()
+        input = new()
         {
             BigQueryParameter = default,
-            Query = $"SELECT * FROM {_connection.DatasetId}.{_connection.TableId}"
+            Query = $"SELECT * FROM {connection.DatasetId}.{connection.TableId}",
         };
 
-        _options = new()
+        options = new()
         {
             ThrowErrorOnFailure = true,
             MaxRetryAttempts = 5,
-            Delay = 5
+            Delay = 5,
         };
 
-        await CreateData(_connection.ProjectId, _connection.DatasetId, _connection.TableId, _connection.SecretJson);
+        await CreateData(connection.ProjectId, connection.DatasetId, connection.TableId, connection.SecretJson);
     }
 
     [TestCleanup]
     public void Cleanup()
     {
-        DeleteDataset(_connection.ProjectId, _connection.DatasetId, _connection.TableId, _connection.SecretJson);
+        DeleteDataset(connection.ProjectId, connection.DatasetId, connection.TableId, connection.SecretJson);
     }
 
     [TestMethod]
     public async Task Update_SELECT()
     {
-        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -80,10 +82,10 @@ public class UnitTests
     public async Task Update_SELECT_Parameter()
     {
         var param = new[] { new BigQueryParameters() { Name = "ParameterName", BigQueryDbType = BigQueryDbTypes.String, Value = "Sample String" } };
-        _input.Query = $"SELECT * FROM {_connection.DatasetId}.{_connection.TableId} WHERE string_field = @ParameterName";
-        _input.BigQueryParameter = param;
+        input.Query = $"SELECT * FROM {connection.DatasetId}.{connection.TableId} WHERE string_field = @ParameterName";
+        input.BigQueryParameter = param;
 
-        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -92,9 +94,9 @@ public class UnitTests
     [TestMethod]
     public async Task Update_INSERT()
     {
-        _input.Query = @$"INSERT INTO {_connection.DatasetId}.{_connection.TableId} (integer_field, string_field, date_field, float_field, boolean_field, timestamp_field, time_field, datetime_field, record_field, array_field, struct_field) VALUES (3, 'New Sample', DATE '2023-09-22', 4.56, TRUE, TIMESTAMP '2023-09-22T14:45:00Z', TIME '14:45:00.123', DATETIME '2023-09-22 14:45:00.123000', STRUCT('Nested New', 55), ['Item 5', 'Item 6'], STRUCT('Jane Doe', 40));";
+        input.Query = @$"INSERT INTO {connection.DatasetId}.{connection.TableId} (integer_field, string_field, date_field, float_field, boolean_field, timestamp_field, time_field, datetime_field, record_field, array_field, struct_field) VALUES (3, 'New Sample', DATE '2023-09-22', 4.56, TRUE, TIMESTAMP '2023-09-22T14:45:00Z', TIME '14:45:00.123', DATETIME '2023-09-22 14:45:00.123000', STRUCT('Nested New', 55), ['Item 5', 'Item 6'], STRUCT('Jane Doe', 40));";
 
-        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -104,9 +106,9 @@ public class UnitTests
     public async Task Update_UPDATE()
     {
         // Have to use old table here to skip long wait
-        _input.Query = $@"UPDATE tasktest.testtable SET Name = 'FooBar' WHERE Name = 'Foo';";
+        input.Query = $@"UPDATE tasktest.testtable SET Name = 'FooBar' WHERE Name = 'Foo';";
 
-        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -116,9 +118,9 @@ public class UnitTests
     public async Task Update_Delete()
     {
         // Have to use old table here to skip long wait
-        _input.Query = $@"DELETE FROM tasktest.testtable WHERE Country = 'USA';";
+        input.Query = $@"DELETE FROM tasktest.testtable WHERE Country = 'USA';";
 
-        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -127,10 +129,10 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Invalid_SecretJson_Throw()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.ExecuteQuery(input, connection, options, default));
         Assert.IsNotNull(ex);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
@@ -138,15 +140,26 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Invalid_SecretJson_ReturnError()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowErrorOnFailure = false;
+        options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        options.ThrowErrorOnFailure = true;
+        options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.ExecuteQuery(input, connection, options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 
     private static async Task CreateData(string projectId, string datasetId, string tableId, string secretJson)
@@ -185,8 +198,8 @@ public class UnitTests
                         Fields = new List<TableFieldSchema>
                         {
                             new TableFieldSchema { Name = "nested_string", Type = "STRING" },
-                            new TableFieldSchema { Name = "nested_integer", Type = "INTEGER" }
-                        }
+                            new TableFieldSchema { Name = "nested_integer", Type = "INTEGER" },
+                        },
                     },
                     new TableFieldSchema { Name = "array_field", Type = "STRING", Mode = "REPEATED" },
                     new TableFieldSchema
@@ -196,10 +209,10 @@ public class UnitTests
                         Fields = new List<TableFieldSchema>
                         {
                             new TableFieldSchema { Name = "name", Type = "STRING" },
-                            new TableFieldSchema { Name = "age", Type = "INTEGER" }
-                        }
-                    }
-                }
+                            new TableFieldSchema { Name = "age", Type = "INTEGER" },
+                        },
+                    },
+                },
             };
 
             // Table
@@ -209,7 +222,7 @@ public class UnitTests
                 {
                     ProjectId = projectId,
                     DatasetId = datasetId,
-                    TableId = tableId
+                    TableId = tableId,
                 },
                 RequirePartitionFilter = false,
                 Description = "Table with various data types",
@@ -222,7 +235,7 @@ public class UnitTests
                         Start = 1,
                         End = 2,
                         Interval = 3,
-                    }
+                    },
                 },
             };
 
@@ -279,7 +292,7 @@ public class UnitTests
         var serviceInitializer = new BaseClientService.Initializer
         {
             HttpClientInitializer = credential,
-            ApplicationName = "BigQueryApp"
+            ApplicationName = "BigQueryApp",
         };
         return new BigqueryService(serviceInitializer);
     }
@@ -294,18 +307,7 @@ public class UnitTests
         }
         catch
         {
-            //ignore exception
+            // ignore exception
         }
-    }
-
-    [TestMethod]
-    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
-    {
-        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        _options.ThrowErrorOnFailure = true;
-        _options.ErrorMessageOnFailure = "CustomErrorMessage";
-
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default));
-        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

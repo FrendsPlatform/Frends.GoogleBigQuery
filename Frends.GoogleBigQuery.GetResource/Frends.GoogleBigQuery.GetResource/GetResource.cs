@@ -1,15 +1,15 @@
-using Frends.GoogleBigQuery.GetResource.Definitions;
-using Frends.GoogleBigQuery.GetResource.Helpers;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Bigquery.v2;
-using Google.Apis.Services;
-using Newtonsoft.Json.Linq;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Frends.GoogleBigQuery.GetResource.Definitions;
+using Frends.GoogleBigQuery.GetResource.Helpers;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Bigquery.v2;
+using Google.Apis.Services;
+using Newtonsoft.Json.Linq;
 
 namespace Frends.GoogleBigQuery.GetResource;
 

@@ -1,13 +1,13 @@
-using Frends.GoogleBigQuery.DeleteResource.Definitions;
-using Frends.GoogleBigQuery.DeleteResource.Helpers;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Bigquery.v2;
-using Google.Apis.Services;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Frends.GoogleBigQuery.DeleteResource.Definitions;
+using Frends.GoogleBigQuery.DeleteResource.Helpers;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Bigquery.v2;
+using Google.Apis.Services;
 
 namespace Frends.GoogleBigQuery.DeleteResource;
 

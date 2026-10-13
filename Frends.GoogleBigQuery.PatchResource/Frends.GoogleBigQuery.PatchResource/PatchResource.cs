@@ -1,15 +1,15 @@
-using Frends.GoogleBigQuery.PatchResource.Definitions;
-using Frends.GoogleBigQuery.PatchResource.Helpers;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Bigquery.v2;
-using Google.Apis.Bigquery.v2.Data;
-using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Frends.GoogleBigQuery.PatchResource.Definitions;
+using Frends.GoogleBigQuery.PatchResource.Helpers;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Bigquery.v2;
+using Google.Apis.Bigquery.v2.Data;
+using Google.Apis.Services;
 
 namespace Frends.GoogleBigQuery.PatchResource;
 
@@ -51,7 +51,6 @@ public static class GoogleBigQuery
     {
         var jsonCredentials = connection.ReadJsonMethod == ReadJsonMethods.File ? await File.ReadAllTextAsync(connection.CredentialsFilePath, cancellationToken) : connection.SecretJson;
 
-
         ServiceAccountCredential credential;
         using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonCredentials));
         credential = GoogleCredential.FromStream(stream)
@@ -74,11 +73,14 @@ public static class GoogleBigQuery
                 if (input.Access is not null)
                 {
                     foreach (var param in input.Access)
+                    {
                         accessList.Add(new()
                         {
                             Role = param.Role,
-                            UserByEmail = param.UserByEmail
+                            UserByEmail = param.UserByEmail,
                         });
+                    }
+
                     dataset.Access = accessList;
                 }
 
@@ -131,12 +133,14 @@ public static class GoogleBigQuery
                 if (input.TableSchema is not null)
                 {
                     foreach (var param in input.TableSchema)
+                    {
                         tableFieldSchema.Add(
                             new TableFieldSchema
                             {
                                 Name = param.Name,
                                 Type = param.Type.ToUpper(),
                             });
+                    }
 
                     tableSchema.Fields = tableFieldSchema;
                     table.Schema = tableSchema;
@@ -153,14 +157,16 @@ public static class GoogleBigQuery
                 {
                     ProjectId = connection.ProjectId,
                     DatasetId = connection.DatasetId,
-                    TableId = connection.TableId
+                    TableId = connection.TableId,
                 };
 
                 if (input.SetEncryptionConfiguration)
+                {
                     table.EncryptionConfiguration = !input.SetEncryptionConfiguration ? null : new EncryptionConfiguration
                     {
-                        KmsKeyName = input.KmsKeyName
+                        KmsKeyName = input.KmsKeyName,
                     };
+                }
 
                 if (input.RequirePartitionFilter)
                     table.RequirePartitionFilter = input.RequirePartitionFilter;
@@ -175,6 +181,7 @@ public static class GoogleBigQuery
                     table.Location = input.Location;
 
                 if (input.Partition is TablePartitionOptions.RangePartitioning)
+                {
                     table.RangePartitioning = new RangePartitioning()
                     {
                         Field = input.RangeField.ToUpper(),
@@ -183,16 +190,19 @@ public static class GoogleBigQuery
                             Start = input.RangeStart,
                             End = input.RangeEnd,
                             Interval = input.RangeInterval,
-                        }
+                        },
                     };
+                }
                 else
+                {
                     table.TimePartitioning = new TimePartitioning()
                     {
                         RequirePartitionFilter = input.TimeRequirePartitionFilter,
                         ExpirationMs = input.ExpirationMs,
                         Field = input.TimeField,
-                        Type = input.Type.ToString()
+                        Type = input.Type.ToString(),
                     };
+                }
 
                 await service.Tables.Patch(table, connection.ProjectId, connection.DatasetId, connection.TableId).ExecuteAsync(cancellationToken);
                 return true;

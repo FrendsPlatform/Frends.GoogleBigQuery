@@ -1,42 +1,44 @@
+using System.Text;
 using Frends.GoogleBigQuery.UpdateResource.Definitions;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Bigquery.v2;
 using Google.Apis.Bigquery.v2.Data;
 using Google.Apis.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
 
 namespace Frends.GoogleBigQuery.UpdateResource.Tests;
 
 [TestClass]
 public class UnitTests
 {
-    private Input _input = new();
-    private Connection _connection = new();
-    private Options _options = new();
-    private readonly string? _secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
-    private readonly string? _testuserEmail = Environment.GetEnvironmentVariable("Frends_TestUser_Email");
-    private readonly string _projectId = "instant-stone-387712";
+    private readonly string? secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
+    private readonly string? testuserEmail = Environment.GetEnvironmentVariable("Frends_TestUser_Email");
+    private readonly string projectId = "instant-stone-387712";
+    private Input input = new();
+    private Connection connection = new();
+    private Options options = new();
 
     [TestInitialize]
     public void Init()
     {
-        var _datasetId = $"tasktest_dataset_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
-        var _tableId = $"tasktest_tableid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
-        var _routineId = $"tasktest_routineid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var datasetId = $"tasktest_dataset_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var tableId = $"tasktest_tableid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var routineId = $"tasktest_routineid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
         string json;
 
         // This one is to handle CI secret problems.
-        if (File.Exists(_secretJson))
-            json = File.ReadAllText(_secretJson);
+        if (File.Exists(secretJson))
+        {
+            json = File.ReadAllText(secretJson);
+        }
         else
         {
-            var _json = !string.IsNullOrEmpty(_secretJson) ? _secretJson : "";
-            byte[] bytes = Convert.FromBase64String(_json);
+            var encodedJson = !string.IsNullOrEmpty(secretJson) ? secretJson : string.Empty;
+            byte[] bytes = Convert.FromBase64String(encodedJson);
             json = Encoding.UTF8.GetString(bytes);
         }
 
-        _input = new()
+        input = new()
         {
             Resource = Resources.Dataset,
             Description = "This is Description.",
@@ -45,15 +47,15 @@ public class UnitTests
             SetEncryptionConfiguration = default,
             KmsKeyName = null,
 
-            //Dataset
+            // Dataset
             Location = "EU",
             StorageBillingModel = "LOGICAL",
             IsCaseInsensitive = true,
             MaxTimeTravelHours = 48,
-            Access = new[] { new AccessParameters() { Role = "READER", UserByEmail = _testuserEmail } },
+            Access = new[] { new AccessParameters() { Role = "READER", UserByEmail = testuserEmail } },
             Tag = new[] { new TagParameters() { Key = "key", Value = "value" } },
 
-            //Routines
+            // Routines
             Argument = new[] { new ArgumentParameters() { DataType = "Int64", Name = "x", ArgumentKind = ArgumentKindOptions.FIXED_TYPE } },
             DefinitionBody = "(x * 3)",
             SetRemoteFunctionParameters = false,
@@ -68,26 +70,30 @@ public class UnitTests
             RemoteUserDefinedContext = null,
             ReturnType = "Int64",
 
-            //Tables
+            // Tables
             RequirePartitionFilter = false,
-            TableSchema = new[] {
+            TableSchema = new[]
+            {
                 new TableSchemaParameters()
                 {
                     Name = "Name",
-                    Type = "STRING"
+                    Type = "STRING",
                 },
-                new TableSchemaParameters() {
+                new TableSchemaParameters()
+                {
                     Name = "AGE",
-                    Type = "INTEGER"
+                    Type = "INTEGER",
                 },
-                new TableSchemaParameters() {
+                new TableSchemaParameters()
+                {
                     Name = "BDAY",
-                    Type = "DATE"
+                    Type = "DATE",
                 },
-                new TableSchemaParameters() {
+                new TableSchemaParameters()
+                {
                     Name = "Country",
-                    Type = "STRING"
-                }
+                    Type = "STRING",
+                },
             },
             TimeField = "BDAY",
             Partition = TablePartitionOptions.RangePartitioning,
@@ -100,19 +106,19 @@ public class UnitTests
             ExpirationMs = 1,
         };
 
-        _connection = new()
+        connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
             SecretJson = json,
-            ProjectId = _projectId,
-            DatasetId = _datasetId,
-            TableId = _tableId,
-            RoutineId = _routineId,
+            ProjectId = projectId,
+            DatasetId = datasetId,
+            TableId = tableId,
+            RoutineId = routineId,
             BaseUri = null,
             CredentialsFilePath = null,
         };
 
-        _options = new()
+        options = new()
         {
             ThrowErrorOnFailure = true,
         };
@@ -121,107 +127,111 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Dataset()
     {
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
+        await CreateDatasetResource(connection.ProjectId, connection.DatasetId, connection.SecretJson);
 
-        _input = new Input()
+        input = new Input()
         {
             Resource = Resources.Dataset,
             Description = "This is updated Description.",
             FriendlyName = "This is updated FriendlyName.",
             Label = new[] { new LabelParameters() { Key = "updatedkey", Value = "updatedvalue" } },
-            Location = null, //EU
+            Location = null, // EU
             StorageBillingModel = "LOGICAL",
-            IsCaseInsensitive = false, //was true
-            MaxTimeTravelHours = 0, //was 48
-            Tag = new[] { new TagParameters() { Key = "key2", Value = "value2" } } // was key:value 
+            IsCaseInsensitive = false, // was true
+            MaxTimeTravelHours = 0, // was 48
+            Tag = new[] { new TagParameters() { Key = "key2", Value = "value2" } }, // was key:value
         };
 
-        var result = await GoogleBigQuery.UpdateResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.UpdateResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.Error);
 
-        await DeleteDataset(_connection.ProjectId, _connection.DatasetId, null, null, _connection.SecretJson);
+        await DeleteDataset(connection.ProjectId, connection.DatasetId, null, null, connection.SecretJson);
     }
 
     [TestMethod]
     public async Task Update_Routine()
     {
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
-        await CreateRoutineResource(_connection.ProjectId, _connection.DatasetId, _connection.RoutineId, _connection.SecretJson);
+        await CreateDatasetResource(connection.ProjectId, connection.DatasetId, connection.SecretJson);
+        await CreateRoutineResource(connection.ProjectId, connection.DatasetId, connection.RoutineId, connection.SecretJson);
 
-        _input = new()
+        input = new()
         {
             Resource = Resources.Routine,
-            Argument = new[] { new ArgumentParameters() { DataType = "Int64", Name = "y", ArgumentKind = ArgumentKindOptions.FIXED_TYPE } }, //Name = "y"
-            DefinitionBody = "(y * 3)", //"(x * 3)"
+            Argument = new[] { new ArgumentParameters() { DataType = "Int64", Name = "y", ArgumentKind = ArgumentKindOptions.FIXED_TYPE } }, // Name = "y"
+            DefinitionBody = "(y * 3)", // "(x * 3)"
             SetRemoteFunctionParameters = false,
             Language = "SQL",
             DeterminismLevel = DeterminismLevels.DETERMINISM_LEVEL_UNSPECIFIED,
             RoutineType = RoutineTypes.SCALAR_FUNCTION,
-            StrictMode = false, //true
+            StrictMode = false, // true
             ImportedLibrary = null,
             RemoteConnection = null,
             RemoteEndpoint = null,
-            RemoteMaxBatchingRows = 2, //1
+            RemoteMaxBatchingRows = 2, // 1
             RemoteUserDefinedContext = null,
             ReturnType = "Int64",
         };
-        var result = await GoogleBigQuery.UpdateResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.UpdateResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.Error);
 
-        await DeleteDataset(_connection.ProjectId, _connection.DatasetId, null, _connection.RoutineId, _connection.SecretJson);
+        await DeleteDataset(connection.ProjectId, connection.DatasetId, null, connection.RoutineId, connection.SecretJson);
     }
 
     [TestMethod]
     public async Task Update_Table()
     {
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
-        await CreateTableResource(_connection.ProjectId, _connection.DatasetId, _connection.TableId, _connection.SecretJson);
+        await CreateDatasetResource(connection.ProjectId, connection.DatasetId, connection.SecretJson);
+        await CreateTableResource(connection.ProjectId, connection.DatasetId, connection.TableId, connection.SecretJson);
 
-        _input = new()
+        input = new()
         {
             Resource = Resources.Table,
-            RequirePartitionFilter = true, //false
-            TableSchema = new[] {
-                new TableSchemaParameters() {
+            RequirePartitionFilter = true, // false
+            TableSchema = new[]
+            {
+                new TableSchemaParameters()
+                {
                     Name = "AGE",
-                    Type = "INTEGER"
+                    Type = "INTEGER",
                 },
-                new TableSchemaParameters() {
+                new TableSchemaParameters()
+                {
                     Name = "DAY",
-                    Type = "INTEGER"
+                    Type = "INTEGER",
                 },
-                new TableSchemaParameters() {
+                new TableSchemaParameters()
+                {
                     Name = "NEWCOL",
-                    Type = "INTEGER"
-                }
+                    Type = "INTEGER",
+                },
             },
             Partition = TablePartitionOptions.RangePartitioning,
             RangeField = "AGE",
             RangeStart = 1,
             RangeEnd = 2,
             RangeInterval = 3,
-            Description = null, //Should remove existing desc
-            Location = null, //EU
+            Description = null, // Should remove existing desc
+            Location = null, // EU
             FriendlyName = "UpdateFriendlyName",
             Label = new[] { new LabelParameters() { Key = "updatekey", Value = "updatevalue" } },
         };
 
-        var result = await GoogleBigQuery.UpdateResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.UpdateResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNull(result.Error);
 
-        await DeleteDataset(_connection.ProjectId, _connection.DatasetId, _connection.TableId, null, _connection.SecretJson);
+        await DeleteDataset(connection.ProjectId, connection.DatasetId, connection.TableId, null, connection.SecretJson);
     }
 
     [TestMethod]
     public async Task Update_Invalid_SecretJson_Throw()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.UpdateResource(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.UpdateResource(input, connection, options, default));
         Assert.IsNotNull(ex);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
@@ -229,15 +239,26 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Invalid_SecretJson_ReturnError()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowErrorOnFailure = false;
+        options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.UpdateResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.UpdateResource(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        options.ThrowErrorOnFailure = true;
+        options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.UpdateResource(input, connection, options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 
     private static async Task CreateDatasetResource(string projectId, string datasetId, string secretJson)
@@ -266,13 +287,13 @@ public class UnitTests
                 DatasetId = datasetId,
                 ProjectId = projectId,
                 RoutineId = routineId,
-            }
+            },
         };
         var bigqueryService = GetBigqueryService(secretJson);
         await bigqueryService.Routines.Insert(routine, projectId, datasetId).ExecuteAsync();
     }
 
-    private static async Task CreateTableResource(string projectId, string datasetId, string TableId, string secretJson)
+    private static async Task CreateTableResource(string projectId, string datasetId, string tableId, string secretJson)
     {
         List<TableFieldSchema> tableFieldSchema = new() { new TableFieldSchema() { Name = "AGE", Type = "INTEGER" }, new TableFieldSchema() { Name = "DAY", Type = "INTEGER" } };
         TableSchema tableSchema = new() { Fields = tableFieldSchema };
@@ -282,7 +303,7 @@ public class UnitTests
             {
                 ProjectId = projectId,
                 DatasetId = datasetId,
-                TableId = TableId
+                TableId = tableId,
             },
             RequirePartitionFilter = false,
             Description = "This is desc",
@@ -295,7 +316,7 @@ public class UnitTests
                     Start = 1,
                     End = 2,
                     Interval = 3,
-                }
+                },
             },
         };
         var bigqueryService = GetBigqueryService(secretJson);
@@ -312,7 +333,7 @@ public class UnitTests
         var serviceInitializer = new BaseClientService.Initializer
         {
             HttpClientInitializer = credential,
-            ApplicationName = "BigQueryApp"
+            ApplicationName = "BigQueryApp",
         };
         return new BigqueryService(serviceInitializer);
     }
@@ -334,16 +355,5 @@ public class UnitTests
         {
             throw new Exception(ex.Message);
         }
-    }
-
-    [TestMethod]
-    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
-    {
-        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        _options.ThrowErrorOnFailure = true;
-        _options.ErrorMessageOnFailure = "CustomErrorMessage";
-
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.UpdateResource(_input, _connection, _options, default));
-        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

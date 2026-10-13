@@ -28,7 +28,7 @@ public class Input
     public string FriendlyName { get; set; }
 
     /// <summary>
-    /// The geographic location where the resource should reside. 
+    /// The geographic location where the resource should reside.
     /// See details at https://cloud.google.com/bigquery/docs/locations
     /// </summary>
     /// <example>europe-north1</example>
@@ -38,8 +38,8 @@ public class Input
 
     /// <summary>
     /// Label(s) for Dataset or Table resource. (Optional)
-    /// Label keys and values can be no longer than 63 characters, can only contain lowercase letters, numeric characters, underscores and dashes. 
-    /// International characters are allowed. 
+    /// Label keys and values can be no longer than 63 characters, can only contain lowercase letters, numeric characters, underscores and dashes.
+    /// International characters are allowed.
     /// Label keys must start with a letter and each label in the list must have a different key.
     /// </summary>
     /// <example>[ {foo, bar }, { bar, foo } ]</example>
@@ -60,10 +60,9 @@ public class Input
     [UIHint(nameof(SetEncryptionConfiguration), "", true)]
     public string KmsKeyName { get; set; }
 
-    #region Dataset specific
     /// <summary>
     /// Storage billing model to be used for all tables in the dataset.
-    /// Can be set to PHYSICAL. 
+    /// Can be set to PHYSICAL.
     /// </summary>
     /// <example>LOGICAL</example>
     [DefaultValue("LOGICAL")]
@@ -90,7 +89,7 @@ public class Input
 
     /// <summary>
     /// An array of objects that define dataset access for one or more entities. (Optional)
-    /// You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. 
+    /// You can set this property when inserting or updating a dataset in order to control who is allowed to access the data.
     /// If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities:
     /// access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
     /// </summary>
@@ -105,9 +104,7 @@ public class Input
     /// <example>[ { foo, bar }, { foo2, bar2 } ]</example>
     [UIHint(nameof(Resource), "", Resources.Dataset)]
     public TagParameters[] Tag { get; set; }
-    #endregion Dataset specific
 
-    #region Table specific
     /// <summary>
     /// If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.
     /// </summary>
@@ -132,8 +129,8 @@ public class Input
     public TablePartitionOptions Partition { get; set; }
 
     /// <summary>
-    /// The table is partitioned by this field. 
-    /// The field must be a top-level NULLABLE/REQUIRED field. 
+    /// The table is partitioned by this field.
+    /// The field must be a top-level NULLABLE/REQUIRED field.
     /// The only supported type is INTEGER/INT64.
     /// </summary>
     /// <example>AGE</example>
@@ -163,8 +160,8 @@ public class Input
     public long RangeInterval { get; set; }
 
     /// <summary>
-    /// If not set, the table is partitioned by pseudo column, referenced via either '_PARTITIONTIME' as TIMESTAMP type, or '_PARTITIONDATE' as DATE type. 
-    /// If field is specified, the table is instead partitioned by this field. 
+    /// If not set, the table is partitioned by pseudo column, referenced via either '_PARTITIONTIME' as TIMESTAMP type, or '_PARTITIONDATE' as DATE type.
+    /// If field is specified, the table is instead partitioned by this field.
     /// The field must be a top-level TIMESTAMP or DATE field. Its mode must be NULLABLE or REQUIRED.
     /// </summary>
     /// <example>TIMESTAMP</example>
@@ -188,12 +185,11 @@ public class Input
     public bool TimeRequirePartitionFilter { get; set; }
 
     /// <summary>
-    /// Number of milliseconds for which to keep the storage for partitions in the table. 
+    /// Number of milliseconds for which to keep the storage for partitions in the table.
     /// The storage in a partition will have an expiration time of its partition time plus this value.
     /// </summary>
     /// <example>0</example>
     [DefaultValue(0)]
     [UIHint(nameof(Partition), "", TablePartitionOptions.TimePartitioning)]
     public long ExpirationMs { get; set; }
-    #endregion Table specific
 }

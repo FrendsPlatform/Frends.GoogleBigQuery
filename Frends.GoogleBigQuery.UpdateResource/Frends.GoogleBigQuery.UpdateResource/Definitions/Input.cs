@@ -28,7 +28,7 @@ public class Input
     public string FriendlyName { get; set; }
 
     /// <summary>
-    /// The geographic location where the resource should reside. 
+    /// The geographic location where the resource should reside.
     /// See details at https://cloud.google.com/bigquery/docs/locations
     /// </summary>
     /// <example>europe-north1</example>
@@ -38,8 +38,8 @@ public class Input
 
     /// <summary>
     /// Label(s) for Dataset or Table resource. (Optional)
-    /// Label keys and values can be no longer than 63 characters, can only contain lowercase letters, numeric characters, underscores and dashes. 
-    /// International characters are allowed. 
+    /// Label keys and values can be no longer than 63 characters, can only contain lowercase letters, numeric characters, underscores and dashes.
+    /// International characters are allowed.
     /// Label keys must start with a letter and each label in the list must have a different key.
     /// </summary>
     /// <example>[ {foo, bar }, { bar, foo } ]</example>
@@ -60,10 +60,9 @@ public class Input
     [UIHint(nameof(SetEncryptionConfiguration), "", true)]
     public string KmsKeyName { get; set; }
 
-    #region Dataset specific
     /// <summary>
     /// Storage billing model to be used for all tables in the dataset.
-    /// Can be set to PHYSICAL. 
+    /// Can be set to PHYSICAL.
     /// </summary>
     /// <example>LOGICAL</example>
     [DefaultValue("LOGICAL")]
@@ -90,7 +89,7 @@ public class Input
 
     /// <summary>
     /// An array of objects that define dataset access for one or more entities. (Optional)
-    /// You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. 
+    /// You can set this property when inserting or updating a dataset in order to control who is allowed to access the data.
     /// If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities:
     /// access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
     /// </summary>
@@ -105,16 +104,14 @@ public class Input
     /// <example>[ { foo, bar }, { foo2, bar2 } ]</example>
     [UIHint(nameof(Resource), "", Resources.Dataset)]
     public TagParameters[] Tag { get; set; }
-    #endregion Dataset specific
 
-    #region Routine specific
     /// <summary>
-    /// The body of the routine. 
-    /// For functions, this is the expression in the AS clause. 
-    /// If language=SQL, it is the substring inside (but excluding) the parentheses. 
-    /// For example, for the function created with the following statement: 
-    /// `CREATE FUNCTION JoinLines(x string, y string) as (concat(x, "\n", y))` The definition_body is `concat(x, "\n", y)` (\n is not replaced with linebreak). 
-    /// If language=JAVASCRIPT, it is the evaluated string in the AS clause. 
+    /// The body of the routine.
+    /// For functions, this is the expression in the AS clause.
+    /// If language=SQL, it is the substring inside (but excluding) the parentheses.
+    /// For example, for the function created with the following statement:
+    /// `CREATE FUNCTION JoinLines(x string, y string) as (concat(x, "\n", y))` The definition_body is `concat(x, "\n", y)` (\n is not replaced with linebreak).
+    /// If language=JAVASCRIPT, it is the evaluated string in the AS clause.
     /// For example, for the function created with the following statement:
     /// `CREATE FUNCTION f() RETURNS STRING LANGUAGE js AS 'return "\n";\n'` The definition_body is `return "\n";\n`
     /// Note that both \n are replaced with linebreaks.
@@ -140,11 +137,11 @@ public class Input
     public RoutineTypes RoutineType { get; set; }
 
     /// <summary>
-    /// Optional if language = "SQL"; required otherwise. 
+    /// Optional if language = "SQL"; required otherwise.
     /// Cannot be set if Input.RoutineType = "TABLE_VALUED_FUNCTION".
-    /// If absent, the return type is inferred from definition_body at query time in each query that references this routine. 
+    /// If absent, the return type is inferred from definition_body at query time in each query that references this routine.
     /// If present, then the evaluated result will be cast to the specified returned type at query time.
-    /// For example, for the functions created with the following statements: * `CREATE FUNCTION Add(x FLOAT64, y FLOAT64) RETURNS FLOAT64 AS (x + y);` * `CREATE FUNCTION Increment(x FLOAT64) AS (Add(x, 1));` * `CREATE FUNCTION Decrement(x FLOAT64) RETURNS FLOAT64 AS (Add(x, -1));` The return_type is `{type_kind: "FLOAT64"}` for `Add` and `Decrement`, and is absent for `Increment` (inferred as FLOAT64 at query time). 
+    /// For example, for the functions created with the following statements: * `CREATE FUNCTION Add(x FLOAT64, y FLOAT64) RETURNS FLOAT64 AS (x + y);` * `CREATE FUNCTION Increment(x FLOAT64) AS (Add(x, 1));` * `CREATE FUNCTION Decrement(x FLOAT64) RETURNS FLOAT64 AS (Add(x, -1));` The return_type is `{type_kind: "FLOAT64"}` for `Add` and `Decrement`, and is absent for `Increment` (inferred as FLOAT64 at query time).
     /// Suppose the function `Add` is replaced by `CREATE OR REPLACE FUNCTION Add(x INT64, y INT64) AS (x + y);` Then the inferred return type of `Increment` is automatically changed to INT64 at query time, while the return type of `Decrement` remains FLOAT64.
     /// </summary>
     /// <example>DATE</example>
@@ -160,8 +157,8 @@ public class Input
     public DeterminismLevels DeterminismLevel { get; set; }
 
     /// <summary>
-    /// Can be set for procedures only. 
-    /// If true (default), the definition body will be validated in the creation and the updates of the procedure. 
+    /// Can be set for procedures only.
+    /// If true (default), the definition body will be validated in the creation and the updates of the procedure.
     /// For procedures with an argument of ANY TYPE, the definition body validtion is not supported at creation/update time, and thus this field must be set to false explicitly.
     /// </summary>
     /// <example>true</example>
@@ -206,7 +203,7 @@ public class Input
     public string RemoteEndpoint { get; set; }
 
     /// <summary>
-    /// Max number of rows in each batch sent to the remote service. 
+    /// Max number of rows in each batch sent to the remote service.
     /// If 0, BigQuery dynamically decides the number of rows in a batch.
     /// </summary>
     /// <example>0</example>
@@ -214,15 +211,13 @@ public class Input
     public long RemoteMaxBatchingRows { get; set; }
 
     /// <summary>
-    /// User-defined context as a set of key/value pairs, which will be sent as function invocation context together with batched arguments in the requests to the remote service. 
+    /// User-defined context as a set of key/value pairs, which will be sent as function invocation context together with batched arguments in the requests to the remote service.
     /// The total number of bytes of keys and values must be less than 8KB.
     /// </summary>
     /// <example>[ { foo, bar }, { foo2, bar2 } ]</example>
     [UIHint(nameof(SetRemoteFunctionParameters), "", true)]
     public UserDefinedContext[] RemoteUserDefinedContext { get; set; }
-    #endregion Routine specific
 
-    #region Table specific
     /// <summary>
     /// If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.
     /// </summary>
@@ -247,8 +242,8 @@ public class Input
     public TablePartitionOptions Partition { get; set; }
 
     /// <summary>
-    /// The table is partitioned by this field. 
-    /// The field must be a top-level NULLABLE/REQUIRED field. 
+    /// The table is partitioned by this field.
+    /// The field must be a top-level NULLABLE/REQUIRED field.
     /// The only supported type is INTEGER/INT64.
     /// </summary>
     /// <example>AGE</example>
@@ -278,8 +273,8 @@ public class Input
     public long RangeInterval { get; set; }
 
     /// <summary>
-    /// If not set, the table is partitioned by pseudo column, referenced via either '_PARTITIONTIME' as TIMESTAMP type, or '_PARTITIONDATE' as DATE type. 
-    /// If field is specified, the table is instead partitioned by this field. 
+    /// If not set, the table is partitioned by pseudo column, referenced via either '_PARTITIONTIME' as TIMESTAMP type, or '_PARTITIONDATE' as DATE type.
+    /// If field is specified, the table is instead partitioned by this field.
     /// The field must be a top-level TIMESTAMP or DATE field. Its mode must be NULLABLE or REQUIRED.
     /// </summary>
     /// <example>TIMESTAMP</example>
@@ -303,12 +298,11 @@ public class Input
     public bool TimeRequirePartitionFilter { get; set; }
 
     /// <summary>
-    /// Number of milliseconds for which to keep the storage for partitions in the table. 
+    /// Number of milliseconds for which to keep the storage for partitions in the table.
     /// The storage in a partition will have an expiration time of its partition time plus this value.
     /// </summary>
     /// <example>0</example>
     [DefaultValue(0)]
     [UIHint(nameof(Partition), "", TablePartitionOptions.TimePartitioning)]
     public long ExpirationMs { get; set; }
-    #endregion Table specific
 }

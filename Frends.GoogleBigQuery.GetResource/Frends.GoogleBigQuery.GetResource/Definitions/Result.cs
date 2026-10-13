@@ -5,6 +5,13 @@ namespace Frends.GoogleBigQuery.GetResource.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, dynamic data, Error error = null)
+    {
+        Success = success;
+        Data = data;
+        Error = error;
+    }
+
     /// <summary>
     /// Operation complete without errors.
     /// </summary>
@@ -14,7 +21,7 @@ public class Result
     /// <summary>
     /// Data as JToken.
     /// </summary>
-    /// <example>{{	"access": [ { "dataset": null, "domain": null, "groupByEmail": null ...	}}</example>
+    /// <example>{{ "access": [ { "dataset": null, "domain": null, "groupByEmail": null ... }}</example>
     public dynamic Data { get; private set; }
 
     /// <summary>
@@ -22,11 +29,4 @@ public class Result
     /// </summary>
     /// <example>null</example>
     public Error Error { get; private set; }
-
-    internal Result(bool success, dynamic data, Error error = null)
-    {
-        Success = success;
-        Data = data;
-        Error = error;
-    }
 }

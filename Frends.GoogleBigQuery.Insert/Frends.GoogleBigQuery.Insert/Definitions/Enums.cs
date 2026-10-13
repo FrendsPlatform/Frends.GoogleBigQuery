@@ -6,13 +6,21 @@
 /// </summary>
 public enum ReadJsonMethods
 {
+    /// <summary>Read credentials from JSON text.</summary>
     JSON,
+
+    /// <summary>Read credentials from a file.</summary>
     File,
 }
 
 public enum SourceFormats
 {
+    /// <summary>Comma-separated values.</summary>
     CSV,
+
+    /// <summary>JSON data.</summary>
     JSON,
-    RowData
+
+    /// <summary>Individual row data.</summary>
+    RowData,
 }

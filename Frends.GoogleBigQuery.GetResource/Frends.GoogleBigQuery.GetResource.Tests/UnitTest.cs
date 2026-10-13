@@ -1,16 +1,16 @@
+using System.Text;
 using Frends.GoogleBigQuery.GetResource.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
 
 namespace Frends.GoogleBigQuery.GetResource.Tests;
 
 [TestClass]
 public class UnitTest
 {
-    private Connection _connection = new();
-    private Input _input = new();
-    private Options _options = new();
-    private readonly string? _secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
+    private readonly string? secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
+    private Connection connection = new();
+    private Input input = new();
+    private Options options = new();
 
     [TestInitialize]
     public void Init()
@@ -18,25 +18,27 @@ public class UnitTest
         string json;
 
         // This one is to handle CI secret problems.
-        if (File.Exists(_secretJson))
-            json = File.ReadAllText(_secretJson);
+        if (File.Exists(secretJson))
+        {
+            json = File.ReadAllText(secretJson);
+        }
         else
         {
-            var _json = !string.IsNullOrEmpty(_secretJson) ? _secretJson : "";
-            byte[] bytes = Convert.FromBase64String(_json);
+            var json1 = !string.IsNullOrEmpty(secretJson) ? secretJson : string.Empty;
+            byte[] bytes = Convert.FromBase64String(json1);
             json = Encoding.UTF8.GetString(bytes);
         }
 
-        _connection = new()
+        connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
             SecretJson = json,
             ProjectId = "instant-stone-387712",
             BaseUri = null,
-            CredentialsFilePath = null
+            CredentialsFilePath = null,
         };
 
-        _input = new()
+        input = new()
         {
             Resource = Resources.Datasets,
             DatasetId = "tasktest",
@@ -46,10 +48,10 @@ public class UnitTest
             ReadMask = null,
             RoutineId = "newroutine_x_2023_09_12_11_46_44",
             SelectedFields = null,
-            View = Views.Storagestats
+            View = Views.Storagestats,
         };
 
-        _options = new()
+        options = new()
         {
             ThrowErrorOnFailure = true,
         };
@@ -58,7 +60,7 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Datasets()
     {
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -67,9 +69,9 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Routines()
     {
-        _input.Resource = Resources.Routines;
+        input.Resource = Resources.Routines;
 
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -78,10 +80,10 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Routines_ReadMask()
     {
-        _input.Resource = Resources.Routines;
-        _input.ReadMask = "Description";
+        input.Resource = Resources.Routines;
+        input.ReadMask = "Description";
 
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -90,8 +92,8 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Tables()
     {
-        _input.Resource = Resources.Tables;
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        input.Resource = Resources.Tables;
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -100,9 +102,9 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Tables_SelectedFields()
     {
-        _input.Resource = Resources.Tables;
-        _input.SelectedFields = ("age,country");
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        input.Resource = Resources.Tables;
+        input.SelectedFields = "age,country";
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -111,8 +113,8 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Tables_ViewsFull()
     {
-        _input.View = Views.Full;
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        input.View = Views.Full;
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -121,8 +123,8 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Tables_ViewsBasic()
     {
-        _input.View = Views.Basic;
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        input.View = Views.Basic;
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -131,8 +133,8 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Tables_ViewsTablemetadataviewunspecified()
     {
-        _input.View = Views.Tablemetadataviewunspecified;
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        input.View = Views.Tablemetadataviewunspecified;
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -141,8 +143,8 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_Tables_ViewsStoragestats()
     {
-        _input.View = Views.Storagestats;
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        input.View = Views.Storagestats;
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -151,10 +153,10 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Invalid_SecretJson_Throw()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.GetResource(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.GetResource(input, connection, options, default));
         Assert.IsNotNull(ex);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
@@ -162,13 +164,13 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Invalid_SecretJson_ReturnError()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowErrorOnFailure = false;
+        options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNull(result.Data);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
@@ -177,8 +179,8 @@ public class UnitTest
     [TestMethod]
     public async Task Get_Success_BaseUri()
     {
-        _connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
-        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
+        connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
+        var result = await GoogleBigQuery.GetResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
@@ -187,11 +189,11 @@ public class UnitTest
     [TestMethod]
     public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
     {
-        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        _options.ThrowErrorOnFailure = true;
-        _options.ErrorMessageOnFailure = "CustomErrorMessage";
+        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        options.ThrowErrorOnFailure = true;
+        options.ErrorMessageOnFailure = "CustomErrorMessage";
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.GetResource(_input, _connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.GetResource(input, connection, options, default));
         StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

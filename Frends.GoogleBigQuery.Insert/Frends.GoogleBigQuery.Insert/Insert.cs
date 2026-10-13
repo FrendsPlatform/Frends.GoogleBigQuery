@@ -1,10 +1,3 @@
-using Frends.GoogleBigQuery.Insert.Definitions;
-using Frends.GoogleBigQuery.Insert.Helpers;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Bigquery.v2;
-using Google.Apis.Bigquery.v2.Data;
-using Google.Apis.Services;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Frends.GoogleBigQuery.Insert.Definitions;
+using Frends.GoogleBigQuery.Insert.Helpers;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Bigquery.v2;
+using Google.Apis.Bigquery.v2.Data;
+using Google.Apis.Services;
+using Newtonsoft.Json;
 
 namespace Frends.GoogleBigQuery.Insert;
 

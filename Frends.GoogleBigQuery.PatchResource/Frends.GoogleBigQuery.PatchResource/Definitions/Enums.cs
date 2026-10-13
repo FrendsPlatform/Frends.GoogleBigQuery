@@ -6,8 +6,11 @@
 /// </summary>
 public enum Resources
 {
+    /// <summary>The dataset resource.</summary>
     Dataset,
-    Table
+
+    /// <summary>The table resource.</summary>
+    Table,
 }
 
 /// <summary>
@@ -15,7 +18,10 @@ public enum Resources
 /// </summary>
 public enum ReadJsonMethods
 {
+    /// <summary>Read credentials from JSON text.</summary>
     JSON,
+
+    /// <summary>Read credentials from a file.</summary>
     File,
 }
 
@@ -37,13 +43,20 @@ public enum TablePartitionOptions
     /// <summary>
     /// Time-based partitioning specification for this table.
     /// </summary>
-    TimePartitioning
+    TimePartitioning,
 }
 
 public enum TimeTypeOptions
 {
+    /// <summary>Partition by day.</summary>
     DAY,
+
+    /// <summary>Partition by hour.</summary>
     HOUR,
+
+    /// <summary>Partition by month.</summary>
     MONTH,
-    YEAR
+
+    /// <summary>Partition by year.</summary>
+    YEAR,
 }

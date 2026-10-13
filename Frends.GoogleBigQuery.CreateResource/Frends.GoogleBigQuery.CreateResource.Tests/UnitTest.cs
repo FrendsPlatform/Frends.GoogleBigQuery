@@ -109,17 +109,17 @@ public class UnitTest
 
         _options = new()
         {
-            ThrowOnError = true,
+            ThrowErrorOnFailure = true,
         };
     }
 
     [TestMethod]
     public async Task Create_Dataset()
     {
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -130,10 +130,10 @@ public class UnitTest
         _input.Access = null;
         _input.Tag = null;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -142,10 +142,10 @@ public class UnitTest
         _input.TableId = $"newtable_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_1";
         _input.Resource = Resources.Table;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -155,10 +155,10 @@ public class UnitTest
         _input.Resource = Resources.Table;
         _input.Partition = TablePartitionOptions.TimePartitioning;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -169,10 +169,10 @@ public class UnitTest
         _input.Partition = TablePartitionOptions.TimePartitioning;
         _input.Type = TimeTypeOptions.MONTH;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -183,10 +183,10 @@ public class UnitTest
         _input.Partition = TablePartitionOptions.TimePartitioning;
         _input.Type = TimeTypeOptions.YEAR;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -197,10 +197,10 @@ public class UnitTest
         _input.Resource = Resources.Table;
         _input.RequirePartitionFilter = true;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -209,10 +209,10 @@ public class UnitTest
         _input.RoutineId = $"newroutine_{DateTime.UtcNow:yyyy_MM_dd_HH_mm_ss}_1";
         _input.Resource = Resources.Routine;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -224,10 +224,10 @@ public class UnitTest
         _input.Language = "JAVASCRIPT";
         _input.DeterminismLevel = DeterminismLevels.NOT_DETERMINISTIC;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -239,10 +239,10 @@ public class UnitTest
         _input.Language = "JAVASCRIPT";
         _input.DeterminismLevel = DeterminismLevels.DETERMINISTIC;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Url);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [Ignore("Can't share the file. Set _connection.CredentialsFilePath manually.")]
@@ -252,28 +252,48 @@ public class UnitTest
         _connection.ReadJsonMethod = ReadJsonMethods.File;
         _connection.CredentialsFilePath = @"path";
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Create_Success_BaseUri()
     {
         _connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Create_Invalid_SecretJson_ReturnError()
     {
         _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        _options.ThrowOnError = false;
+        _options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.CreateResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.CreateResource(_input, _connection, _options, default);
         Assert.IsFalse(result.Success);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Throws_When_ThrowErrorOnFailure_Is_True()
+    {
+        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        _options.ThrowErrorOnFailure = true;
+
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.CreateResource(_input, _connection, _options, default));
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        _options.ThrowErrorOnFailure = true;
+        _options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.CreateResource(_input, _connection, _options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

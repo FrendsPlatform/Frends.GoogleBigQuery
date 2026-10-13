@@ -97,7 +97,7 @@ public class UnitTests
 
         _options = new()
         {
-            ThrowOnError = true,
+            ThrowErrorOnFailure = true,
         };
     }
 
@@ -119,9 +119,9 @@ public class UnitTests
             Tag = new[] { new TagParameters() { Key = "key2", Value = "value2" } } // was key:value 
         };
 
-        var result = await GoogleBigQuery.PatchResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.PatchResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
 
         await DeleteDataset(_connection.ProjectId, _connection.DatasetId, null, null, _connection.SecretJson);
     }
@@ -161,9 +161,9 @@ public class UnitTests
             Label = new[] { new LabelParameters() { Key = "updatekey", Value = "updatevalue" } },
         };
 
-        var result = await GoogleBigQuery.PatchResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.PatchResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
 
         await DeleteDataset(_connection.ProjectId, _connection.DatasetId, _connection.TableId, null, _connection.SecretJson);
     }
@@ -174,9 +174,9 @@ public class UnitTests
         _connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.PatchResource(_connection, _input, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.PatchResource(_input, _connection, _options, default));
         Assert.IsNotNull(ex);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
 
     [TestMethod]
@@ -186,11 +186,11 @@ public class UnitTests
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowOnError = false;
+        _options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.PatchResource(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.PatchResource(_input, _connection, _options, default);
         Assert.IsFalse(result.Success);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
     }
 
     private static async Task CreateDatasetResource(string projectId, string datasetId, string secretJson)
@@ -268,5 +268,16 @@ public class UnitTests
         {
             throw new Exception(ex.Message);
         }
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        _options.ThrowErrorOnFailure = true;
+        _options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.PatchResource(_input, _connection, _options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

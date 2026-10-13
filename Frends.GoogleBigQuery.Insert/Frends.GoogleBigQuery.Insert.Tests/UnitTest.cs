@@ -52,16 +52,16 @@ Bar Csv;2;Barland",
 
         _options = new()
         {
-            ThrowOnError = true,
+            ThrowErrorOnFailure = true,
         };
     }
 
     [TestMethod]
     public async Task Import_Csv()
     {
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -71,43 +71,43 @@ Bar Csv;2;Barland",
         _input.Csv = @"Name,Age,Country
 Foo,1,Fooland
 Bar,2,Barland";
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
-    public async Task Import_Csv_ColumnDoesntExists_ThrowOnError_False()
+    public async Task Import_Csv_ColumnDoesntExists_ThrowErrorOnFailure_False()
     {
-        _options.ThrowOnError = false;
+        _options.ThrowErrorOnFailure = false;
         _input.Csv = @"Invalid;Age;Country
 Foo Csv;1;Fooland
 Bar Csv;2;Barland";
 
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsFalse(result.Success);
-        Assert.AreEqual("Error occured: no such field: Invalid.", result.ErrorMessage);
+        Assert.AreEqual("no such field: Invalid.", result.Error.Message);
     }
 
     [TestMethod]
-    public async Task Import_Csv_ColumnDoesntExists_ThrowOnError_True()
+    public async Task Import_Csv_ColumnDoesntExists_ThrowErrorOnFailure_True()
     {
         _input.Csv = @"Invalid;Age;Country
 Foo Csv;1;Fooland
 Bar Csv;2;Barland";
 
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.Insert(_connection, _input, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.Insert(_input, _connection, _options, default));
         Assert.IsNotNull(ex);
-        Assert.AreEqual("Error occured: no such field: Invalid.", ex.Message);
+        Assert.AreEqual("no such field: Invalid.", ex.Message);
     }
 
     [TestMethod]
     public async Task Import_Json()
     {
         _input.SourceFormat = SourceFormats.JSON;
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -139,9 +139,9 @@ Bar Csv;2;Barland";
 
         _input.RowData = insertParams;
 
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [Ignore("Can't share the file. Set _connection.CredentialsFilePath manually.")]
@@ -168,28 +168,39 @@ Bar Csv;2;Barland";
         _connection.ReadJsonMethod = ReadJsonMethods.File;
         _connection.CredentialsFilePath = @"path";
 
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Import_Success_BaseUri()
     {
         _connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Import_Invalid_SecretJson_ReturnError()
     {
         _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        _options.ThrowOnError = false;
+        _options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.Insert(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.Insert(_input, _connection, _options, default);
         Assert.IsFalse(result.Success);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        _options.ThrowErrorOnFailure = true;
+        _options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.Insert(_input, _connection, _options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

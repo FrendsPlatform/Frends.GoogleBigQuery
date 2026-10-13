@@ -8,6 +8,7 @@ namespace Frends.GoogleBigQuery.GetResource.Tests;
 public class UnitTest
 {
     private Connection _connection = new();
+    private Input _input = new();
     private Options _options = new();
     private readonly string? _secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
 
@@ -29,13 +30,17 @@ public class UnitTest
         _connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
-            Resource = Resources.Datasets,
             SecretJson = json,
             ProjectId = "instant-stone-387712",
+            BaseUri = null,
+            CredentialsFilePath = null
+        };
+
+        _input = new()
+        {
+            Resource = Resources.Datasets,
             DatasetId = "tasktest",
             TableId = "testtable",
-            BaseUri = null,
-            CredentialsFilePath = null,
             JobId = null,
             ModelId = null,
             ReadMask = null,
@@ -46,101 +51,101 @@ public class UnitTest
 
         _options = new()
         {
-            ThrowOnError = true,
+            ThrowErrorOnFailure = true,
         };
     }
 
     [TestMethod]
     public async Task Get_Success_Datasets()
     {
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Routines()
     {
-        _connection.Resource = Resources.Routines;
+        _input.Resource = Resources.Routines;
 
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Routines_ReadMask()
     {
-        _connection.Resource = Resources.Routines;
-        _connection.ReadMask = "Description";
+        _input.Resource = Resources.Routines;
+        _input.ReadMask = "Description";
 
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Tables()
     {
-        _connection.Resource = Resources.Tables;
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        _input.Resource = Resources.Tables;
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Tables_SelectedFields()
     {
-        _connection.Resource = Resources.Tables;
-        _connection.SelectedFields = ("age,country");
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        _input.Resource = Resources.Tables;
+        _input.SelectedFields = ("age,country");
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Tables_ViewsFull()
     {
-        _connection.View = Views.Full;
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        _input.View = Views.Full;
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Tables_ViewsBasic()
     {
-        _connection.View = Views.Basic;
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        _input.View = Views.Basic;
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Tables_ViewsTablemetadataviewunspecified()
     {
-        _connection.View = Views.Tablemetadataviewunspecified;
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        _input.View = Views.Tablemetadataviewunspecified;
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Get_Success_Tables_ViewsStoragestats()
     {
-        _connection.View = Views.Storagestats;
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        _input.View = Views.Storagestats;
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -149,9 +154,9 @@ public class UnitTest
         _connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.GetResource(_connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.GetResource(_input, _connection, _options, default));
         Assert.IsNotNull(ex);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
 
     [TestMethod]
@@ -161,21 +166,32 @@ public class UnitTest
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowOnError = false;
+        _options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsFalse(result.Success);
         Assert.IsNull(result.Data);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
     }
 
     [TestMethod]
     public async Task Get_Success_BaseUri()
     {
         _connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
-        var result = await GoogleBigQuery.GetResource(_connection, _options, default);
+        var result = await GoogleBigQuery.GetResource(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        _options.ThrowErrorOnFailure = true;
+        _options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.GetResource(_input, _connection, _options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

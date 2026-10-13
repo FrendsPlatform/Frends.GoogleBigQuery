@@ -53,7 +53,7 @@ public class UnitTests
 
         _options = new()
         {
-            ThrowOnError = true,
+            ThrowErrorOnFailure = true,
             MaxRetryAttempts = 5,
             Delay = 5
         };
@@ -70,10 +70,10 @@ public class UnitTests
     [TestMethod]
     public async Task Update_SELECT()
     {
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -83,10 +83,10 @@ public class UnitTests
         _input.Query = $"SELECT * FROM {_connection.DatasetId}.{_connection.TableId} WHERE string_field = @ParameterName";
         _input.BigQueryParameter = param;
 
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -94,10 +94,10 @@ public class UnitTests
     {
         _input.Query = @$"INSERT INTO {_connection.DatasetId}.{_connection.TableId} (integer_field, string_field, date_field, float_field, boolean_field, timestamp_field, time_field, datetime_field, record_field, array_field, struct_field) VALUES (3, 'New Sample', DATE '2023-09-22', 4.56, TRUE, TIMESTAMP '2023-09-22T14:45:00Z', TIME '14:45:00.123', DATETIME '2023-09-22 14:45:00.123000', STRUCT('Nested New', 55), ['Item 5', 'Item 6'], STRUCT('Jane Doe', 40));";
 
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -106,10 +106,10 @@ public class UnitTests
         // Have to use old table here to skip long wait
         _input.Query = $@"UPDATE tasktest.testtable SET Name = 'FooBar' WHERE Name = 'Foo';";
 
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -118,10 +118,10 @@ public class UnitTests
         // Have to use old table here to skip long wait
         _input.Query = $@"DELETE FROM tasktest.testtable WHERE Country = 'USA';";
 
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
         Assert.IsTrue(result.Success);
         Assert.IsNotNull(result.Data);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
@@ -130,7 +130,7 @@ public class UnitTests
         _connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default));
         Assert.IsNotNull(ex);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
@@ -142,11 +142,11 @@ public class UnitTests
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowOnError = false;
+        _options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.ExecuteQuery(_connection, _input, _options, default);
+        var result = await GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default);
         Assert.IsFalse(result.Success);
-        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
     }
 
     private static async Task CreateData(string projectId, string datasetId, string tableId, string secretJson)
@@ -296,5 +296,16 @@ public class UnitTests
         {
             //ignore exception
         }
+    }
+
+    [TestMethod]
+    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
+    {
+        _connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
+        _options.ThrowErrorOnFailure = true;
+        _options.ErrorMessageOnFailure = "CustomErrorMessage";
+
+        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.ExecuteQuery(_input, _connection, _options, default));
+        StringAssert.Contains(ex.Message, "CustomErrorMessage");
     }
 }

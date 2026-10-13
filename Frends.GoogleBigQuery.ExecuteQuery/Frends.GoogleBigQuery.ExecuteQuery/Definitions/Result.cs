@@ -1,4 +1,4 @@
-﻿namespace Frends.GoogleBigQuery.ExecuteQuery.Definitions;
+namespace Frends.GoogleBigQuery.ExecuteQuery.Definitions;
 
 /// <summary>
 /// Task's result.
@@ -38,15 +38,15 @@ public class Result
     public dynamic Data { get; private set; }
 
     /// <summary>
-    /// Error message.
+    /// Error details. Null when Success is true.
     /// </summary>
-    /// <example>Error occured...</example>
-    public string ErrorMessage { get; private set; }
+    /// <example>null</example>
+    public Error Error { get; private set; }
 
-    internal Result(bool success, dynamic data, string errorMessage)
+    internal Result(bool success, dynamic data, Error error = null)
     {
         Success = success;
         Data = data;
-        ErrorMessage = errorMessage;
+        Error = error;
     }
 }

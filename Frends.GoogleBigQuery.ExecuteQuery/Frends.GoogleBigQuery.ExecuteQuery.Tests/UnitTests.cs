@@ -105,8 +105,10 @@ public class UnitTests
     [TestMethod]
     public async Task Update_UPDATE()
     {
-        // Have to use old table here to skip long wait
-        input.Query = $@"UPDATE tasktest.testtable SET Name = 'FooBar' WHERE Name = 'Foo';";
+        input.Query = $"INSERT INTO {connection.DatasetId}.{connection.TableId} (integer_field, string_field) VALUES (1, 'Foo')";
+        Assert.IsTrue((await GoogleBigQuery.ExecuteQuery(input, connection, options, default)).Success);
+
+        input.Query = $"UPDATE {connection.DatasetId}.{connection.TableId} SET string_field = 'FooBar' WHERE string_field = 'Foo'";
 
         var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);
@@ -117,8 +119,10 @@ public class UnitTests
     [TestMethod]
     public async Task Update_Delete()
     {
-        // Have to use old table here to skip long wait
-        input.Query = $@"DELETE FROM tasktest.testtable WHERE Country = 'USA';";
+        input.Query = $"INSERT INTO {connection.DatasetId}.{connection.TableId} (integer_field, string_field) VALUES (1, 'Foo')";
+        Assert.IsTrue((await GoogleBigQuery.ExecuteQuery(input, connection, options, default)).Success);
+
+        input.Query = $"DELETE FROM {connection.DatasetId}.{connection.TableId} WHERE string_field = 'Foo'";
 
         var result = await GoogleBigQuery.ExecuteQuery(input, connection, options, default);
         Assert.IsTrue(result.Success);

@@ -8,6 +8,7 @@
 
 ### Added
 - Added Options.ErrorMessageOnFailure for overriding the error message on failure.
+- [Breaking Change] Added the Input class and moved resource-specific parameters from Connection to Input.
 
 ## [1.0.0] - 2023-09-15
 ### Added

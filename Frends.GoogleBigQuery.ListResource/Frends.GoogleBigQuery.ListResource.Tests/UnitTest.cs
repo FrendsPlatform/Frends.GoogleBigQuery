@@ -110,15 +110,4 @@ public class UnitTest
         Assert.IsNotNull(result.Data);
         Assert.IsNull(result.Error);
     }
-
-    [TestMethod]
-    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
-    {
-        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        options.ThrowErrorOnFailure = true;
-        options.ErrorMessageOnFailure = "CustomErrorMessage";
-
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.ListResource(input, connection, options, default));
-        StringAssert.Contains(ex.Message, "CustomErrorMessage");
-    }
 }

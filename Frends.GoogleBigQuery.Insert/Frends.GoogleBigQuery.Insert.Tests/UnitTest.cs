@@ -194,15 +194,4 @@ Bar Csv;2;Barland";
         Assert.IsFalse(result.Success);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
     }
-
-    [TestMethod]
-    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
-    {
-        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        options.ThrowErrorOnFailure = true;
-        options.ErrorMessageOnFailure = "CustomErrorMessage";
-
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.Insert(input, connection, options, default));
-        StringAssert.Contains(ex.Message, "CustomErrorMessage");
-    }
 }

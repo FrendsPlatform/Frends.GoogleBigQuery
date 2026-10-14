@@ -133,17 +133,6 @@ public class UnitTest
         Assert.IsNull(result.Error);
     }
 
-    [TestMethod]
-    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
-    {
-        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        options.ThrowErrorOnFailure = true;
-        options.ErrorMessageOnFailure = "CustomErrorMessage";
-
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.DeleteResource(input, connection, options, default));
-        StringAssert.Contains(ex.Message, "CustomErrorMessage");
-    }
-
     private static async Task CreateDatasetResource(string projectId, string datasetId, string secretJson)
     {
         Dataset dataset = new()

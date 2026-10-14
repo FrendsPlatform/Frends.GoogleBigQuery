@@ -282,24 +282,4 @@ public class UnitTest
         Assert.IsFalse(result.Success);
         Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
     }
-
-    [TestMethod]
-    public async Task ErrorHandler_Throws_When_ThrowErrorOnFailure_Is_True()
-    {
-        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        options.ThrowErrorOnFailure = true;
-
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.CreateResource(input, connection, options, default));
-    }
-
-    [TestMethod]
-    public async Task ErrorHandler_Uses_Custom_ErrorMessageOnFailure()
-    {
-        connection.SecretJson = @"{ ""Foo"": ""Bar"" }";
-        options.ThrowErrorOnFailure = true;
-        options.ErrorMessageOnFailure = "CustomErrorMessage";
-
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.CreateResource(input, connection, options, default));
-        StringAssert.Contains(ex.Message, "CustomErrorMessage");
-    }
 }

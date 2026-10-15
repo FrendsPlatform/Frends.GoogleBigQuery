@@ -6,14 +6,29 @@
 /// </summary>
 public enum Resources
 {
+    /// <summary>The datasets resource.</summary>
     Datasets,
+
+    /// <summary>The jobs resource.</summary>
     Jobs,
+
+    /// <summary>The models resource.</summary>
     Models,
+
+    /// <summary>The projects resource.</summary>
     Projects,
+
+    /// <summary>The routines resource.</summary>
     Routines,
+
+    /// <summary>The row access policies resource.</summary>
     RowAccessPolicies,
+
+    /// <summary>The table data resource.</summary>
     TableData,
-    Tables
+
+    /// <summary>The tables resource.</summary>
+    Tables,
 }
 
 /// <summary>
@@ -21,6 +36,9 @@ public enum Resources
 /// </summary>
 public enum ReadJsonMethods
 {
+    /// <summary>Read credentials from JSON text.</summary>
     JSON,
+
+    /// <summary>Read credentials from a file.</summary>
     File,
 }

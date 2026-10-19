@@ -1,10 +1,17 @@
-﻿namespace Frends.GoogleBigQuery.ListResource.Definitions;
+namespace Frends.GoogleBigQuery.ListResource.Definitions;
 
 /// <summary>
 /// Task's result.
 /// </summary>
 public class Result
 {
+    internal Result(bool success, dynamic data, Error error = null)
+    {
+        Success = success;
+        Data = data;
+        Error = error;
+    }
+
     /// <summary>
     /// Operation complete without errors.
     /// </summary>
@@ -18,15 +25,8 @@ public class Result
     public dynamic Data { get; private set; }
 
     /// <summary>
-    /// Error message.
+    /// Error details. Null when Success is true.
     /// </summary>
-    /// <example>Error occured...</example>
-    public string ErrorMessage { get; private set; }
-
-    internal Result(bool success, dynamic data, string errorMessage)
-    {
-        Success = success;
-        Data = data;
-        ErrorMessage = errorMessage;
-    }
+    /// <example>null</example>
+    public Error Error { get; private set; }
 }

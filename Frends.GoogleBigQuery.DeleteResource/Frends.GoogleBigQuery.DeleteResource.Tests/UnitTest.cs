@@ -1,129 +1,136 @@
+using System.Text;
 using Frends.GoogleBigQuery.DeleteResource.Definitions;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Bigquery.v2;
 using Google.Apis.Bigquery.v2.Data;
 using Google.Apis.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
 
 namespace Frends.GoogleBigQuery.DeleteResource.Tests;
 
 [TestClass]
 public class UnitTest
 {
-    private Connection _connection = new();
-    private Options _options = new();
-    private readonly string? _secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
+    private readonly string? secretJson = Environment.GetEnvironmentVariable("BigQuery_SecretJson");
+    private Connection connection = new();
+    private Input input = new();
+    private Options options = new();
 
     [TestInitialize]
     public void Init()
     {
-        var _datasetId = $"tasktest_dataset_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
-        var _tableId = $"tasktest_tableid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
-        var _routineId = $"tasktest_routineid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var datasetId = $"tasktest_dataset_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var tableId = $"tasktest_tableid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
+        var routineId = $"tasktest_routineid_{DateTime.Now:yyyy_MM_dd_hh_mm_ss}";
         string json;
 
         // This one is to handle CI secret problems.
-        if (File.Exists(_secretJson))
-            json = File.ReadAllText(_secretJson);
+        if (File.Exists(secretJson))
+        {
+            json = File.ReadAllText(secretJson);
+        }
         else
         {
-            var _json = !string.IsNullOrEmpty(_secretJson) ? _secretJson : "";
-            byte[] bytes = Convert.FromBase64String(_json);
+            var encodedJson = !string.IsNullOrEmpty(secretJson) ? secretJson : string.Empty;
+            byte[] bytes = Convert.FromBase64String(encodedJson);
             json = Encoding.UTF8.GetString(bytes);
         }
 
-        _connection = new()
+        connection = new()
         {
             ReadJsonMethod = ReadJsonMethods.JSON,
-            Resource = Resources.Dataset,
             SecretJson = json,
             ProjectId = "instant-stone-387712",
-            DatasetId = _datasetId,
-            TableId = _tableId,
-            RoutineId = _routineId,
-            ModelId = null,
-            JobId = null,
             BaseUri = null,
             CredentialsFilePath = null,
         };
 
-        _options = new()
+        input = new()
         {
-            ThrowOnError = true,
+            Resource = Resources.Dataset,
+            DatasetId = datasetId,
+            TableId = tableId,
+            RoutineId = routineId,
+            ModelId = null,
+            JobId = null,
+        };
+
+        options = new()
+        {
+            ThrowErrorOnFailure = true,
         };
     }
 
     [TestMethod]
     public async Task Delete_Dataset()
     {
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
-        var result = await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        await CreateDatasetResource(connection.ProjectId, input.DatasetId, connection.SecretJson);
+        var result = await GoogleBigQuery.DeleteResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     [TestMethod]
     public async Task Delete_Routine()
     {
-        _connection.Resource = Resources.Routine;
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
-        await CreateRoutineResource(_connection.ProjectId, _connection.DatasetId, _connection.RoutineId, _connection.SecretJson);
-        var result = await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        input.Resource = Resources.Routine;
+        await CreateDatasetResource(connection.ProjectId, input.DatasetId, connection.SecretJson);
+        await CreateRoutineResource(connection.ProjectId, input.DatasetId, input.RoutineId, connection.SecretJson);
+        var result = await GoogleBigQuery.DeleteResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
 
-        _connection.Resource = Resources.Dataset;
-        await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        input.Resource = Resources.Dataset;
+        await GoogleBigQuery.DeleteResource(input, connection, options, default);
     }
 
     [TestMethod]
     public async Task Delete_Table()
     {
-        _connection.Resource = Resources.Table;
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
-        await CreateTableResource(_connection.ProjectId, _connection.DatasetId, _connection.TableId, _connection.SecretJson);
-        var result = await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        input.Resource = Resources.Table;
+        await CreateDatasetResource(connection.ProjectId, input.DatasetId, connection.SecretJson);
+        await CreateTableResource(connection.ProjectId, input.DatasetId, input.TableId, connection.SecretJson);
+        var result = await GoogleBigQuery.DeleteResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
 
-        _connection.Resource = Resources.Dataset;
-        await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        input.Resource = Resources.Dataset;
+        await GoogleBigQuery.DeleteResource(input, connection, options, default);
     }
 
     [TestMethod]
     public async Task Delete_Invalid_SecretJson_Throw()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
-        var ex = await Assert.ThrowsExceptionAsync<Exception>(() => GoogleBigQuery.DeleteResource(_connection, _options, default));
+        var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => GoogleBigQuery.DeleteResource(input, connection, options, default));
         Assert.IsNotNull(ex);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", ex.Message);
     }
 
     [TestMethod]
     public async Task Delete_Invalid_SecretJson_ReturnError()
     {
-        _connection.SecretJson = @"{ 
+        connection.SecretJson = @"{ 
 ""Foo"": ""Bar""
 }";
 
-        _options.ThrowOnError = false;
+        options.ThrowErrorOnFailure = false;
 
-        var result = await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        var result = await GoogleBigQuery.DeleteResource(input, connection, options, default);
         Assert.IsFalse(result.Success);
-        Assert.AreEqual("Error occured: Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.ErrorMessage);
+        Assert.AreEqual("Error creating credential from JSON or JSON parameters. Unrecognized credential type .", result.Error.Message);
     }
 
     [TestMethod]
     public async Task Delete_Success_BaseUri()
     {
-        await CreateDatasetResource(_connection.ProjectId, _connection.DatasetId, _connection.SecretJson);
-        _connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
-        var result = await GoogleBigQuery.DeleteResource(_connection, _options, default);
+        await CreateDatasetResource(connection.ProjectId, input.DatasetId, connection.SecretJson);
+        connection.BaseUri = "https://bigquery.googleapis.com/bigquery/v2/";
+        var result = await GoogleBigQuery.DeleteResource(input, connection, options, default);
         Assert.IsTrue(result.Success);
-        Assert.IsNull(result.ErrorMessage);
+        Assert.IsNull(result.Error);
     }
 
     private static async Task CreateDatasetResource(string projectId, string datasetId, string secretJson)
@@ -152,13 +159,13 @@ public class UnitTest
                 DatasetId = datasetId,
                 ProjectId = projectId,
                 RoutineId = routineId,
-            }
+            },
         };
         var bigqueryService = GetBigqueryService(secretJson);
         await bigqueryService.Routines.Insert(routine, projectId, datasetId).ExecuteAsync();
     }
 
-    private static async Task CreateTableResource(string projectId, string datasetId, string TableId, string secretJson)
+    private static async Task CreateTableResource(string projectId, string datasetId, string tableId, string secretJson)
     {
         List<TableFieldSchema> tableFieldSchema = new() { new TableFieldSchema() { Name = "AGE", Type = "INTEGER" } };
         TableSchema tableSchema = new() { Fields = tableFieldSchema };
@@ -168,7 +175,7 @@ public class UnitTest
             {
                 ProjectId = projectId,
                 DatasetId = datasetId,
-                TableId = TableId
+                TableId = tableId,
             },
             Schema = tableSchema,
             RangePartitioning = new RangePartitioning()
@@ -179,8 +186,8 @@ public class UnitTest
                     Start = 1,
                     End = 10,
                     Interval = 10,
-                }
-            }
+                },
+            },
         };
         var bigqueryService = GetBigqueryService(secretJson);
         await bigqueryService.Tables.Insert(table, projectId, datasetId).ExecuteAsync();
@@ -196,7 +203,7 @@ public class UnitTest
         var serviceInitializer = new BaseClientService.Initializer
         {
             HttpClientInitializer = credential,
-            ApplicationName = "BigQueryApp"
+            ApplicationName = "BigQueryApp",
         };
         return new BigqueryService(serviceInitializer);
     }

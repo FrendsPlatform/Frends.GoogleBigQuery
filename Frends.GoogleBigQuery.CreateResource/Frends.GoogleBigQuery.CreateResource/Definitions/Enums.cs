@@ -6,7 +6,10 @@
 /// </summary>
 public enum ReadJsonMethods
 {
+    /// <summary>Read credentials from JSON text.</summary>
     JSON,
+
+    /// <summary>Read credentials from a file.</summary>
     File,
 }
 
@@ -15,9 +18,14 @@ public enum ReadJsonMethods
 /// </summary>
 public enum Resources
 {
+    /// <summary>The dataset resource.</summary>
     Dataset,
+
+    /// <summary>The routine resource.</summary>
     Routine,
-    Table
+
+    /// <summary>The table resource.</summary>
+    Table,
 }
 
 /// <summary>
@@ -38,7 +46,7 @@ public enum DeterminismLevels
     /// <summary>
     /// The UDF is not deterministic.
     /// </summary>
-    NOT_DETERMINISTIC
+    NOT_DETERMINISTIC,
 }
 
 /// <summary>
@@ -46,9 +54,14 @@ public enum DeterminismLevels
 /// </summary>
 public enum RoutineTypes
 {
+    /// <summary>A scalar function.</summary>
     SCALAR_FUNCTION,
+
+    /// <summary>A stored procedure.</summary>
     PROCEDURE,
-    TABLE_FUNCTION
+
+    /// <summary>A table function.</summary>
+    TABLE_FUNCTION,
 }
 
 /// <summary>
@@ -69,15 +82,22 @@ public enum TablePartitionOptions
     /// <summary>
     /// Time-based partitioning specification for this table.
     /// </summary>
-    TimePartitioning
+    TimePartitioning,
 }
 
 public enum TimeTypeOptions
 {
+    /// <summary>Partition by day.</summary>
     DAY,
+
+    /// <summary>Partition by hour.</summary>
     HOUR,
+
+    /// <summary>Partition by month.</summary>
     MONTH,
-    YEAR
+
+    /// <summary>Partition by year.</summary>
+    YEAR,
 }
 
 public enum ArgumentKindOptions
@@ -95,5 +115,5 @@ public enum ArgumentKindOptions
     /// <summary>
     /// The argument is any type, including struct or array, but not a table. To be added: FIXED_TABLE, ANY_TABLE.
     /// </summary>
-    ANY_TYPE
+    ANY_TYPE,
 }

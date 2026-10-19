@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Frends.GoogleBigQuery.CreateResource.Definitions;
 
@@ -8,10 +9,18 @@ namespace Frends.GoogleBigQuery.CreateResource.Definitions;
 public class Options
 {
     /// <summary>
-    /// Throw an error on exception.
-    /// If set to false, exception message can be found in Result.ErrorMessage.
+    /// Whether to throw an error on failure.
+    /// If set to false, the error can be found in Result.Error.
     /// </summary>
     /// <example>true</example>
     [DefaultValue(true)]
-    public bool ThrowOnError { get; set; }
+    public bool ThrowErrorOnFailure { get; set; } = true;
+
+    /// <summary>
+    /// Overrides the error message on failure. If `ThrowErrorOnFailure` is set to `true`, then the original exception will be wrapped in a new Exception with this error message.
+    /// </summary>
+    /// <example>Creating the BigQuery dataset failed</example>
+    [DisplayFormat(DataFormatString = "Text")]
+    [DefaultValue("")]
+    public string ErrorMessageOnFailure { get; set; } = string.Empty;
 }
